@@ -1,9 +1,9 @@
 import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req } from '@nestjs/common';
 import { User } from '@/api/user/entities/user.entity';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
-import { JwtAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('auth')
 export class AuthController {
@@ -21,15 +21,9 @@ export class AuthController {
     return this.service.login(body);
   }
 
-  @Post('logout')
-  private logout() {
-    return
-  }
-
   @Post('refresh')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   private refresh(@Req() { user }: Request): Promise<string | never> {
-    console.log(user);
     return this.service.refresh(<User>user);
   }
 }
