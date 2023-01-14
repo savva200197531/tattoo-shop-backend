@@ -17,4 +17,11 @@ export class UserService {
 
     return this.repository.save(user);
   }
+
+  public findUser(id: number): Promise<User> {
+    return this.repository.findOne({
+      where: { id },
+      // relations:
+    })
+  }
 }
