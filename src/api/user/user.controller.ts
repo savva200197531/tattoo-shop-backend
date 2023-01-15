@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 import {
   ClassSerializerInterceptor,
   Controller,
@@ -7,10 +9,11 @@ import {
   Put,
   Body,
   Inject,
-  Get, Param, ParseIntPipe
+  Get, Param, ParseIntPipe, Post
 } from "@nestjs/common";
-import { Request } from 'express';
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
+import { AddCartItemDto, RemoveCartItemDto } from "@/api/user/dto/cart.dto";
+
 import { UpdateNameDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
@@ -31,4 +34,21 @@ export class UserController {
   private findUser(@Param('id', ParseIntPipe) id: number) {
     return this.service.findUser(id)
   }
+
+  @Post(':id/cart/add')
+  addItem(
+    @Param('id', ParseIntPipe) id: number, // user id
+    @Body() body: AddCartItemDto
+  ) {
+    return this.service.addCartItem(id, body)
+  }
+
+  // @Put(':id/cart/remove')
+  // removeItem(
+  //   @Param('user_id', ParseIntPipe) user_id: number,
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() body: RemoveCartItemDto
+  // ) {
+  //   return this.service.removeCartItem(id)
+  // }
 }

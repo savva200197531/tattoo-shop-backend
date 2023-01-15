@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
-import { AuthService } from "@/api/user/auth/auth.service";
 
 @Injectable()
 export class CartService {
-  private readonly authService: AuthService;
-
-  create(id: number, createCartDto: CreateCartDto) {
+  create(createCartDto: CreateCartDto) {
     return 'This action adds a new cart';
   }
 

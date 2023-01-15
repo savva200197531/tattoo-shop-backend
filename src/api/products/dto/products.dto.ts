@@ -1,4 +1,5 @@
 import { IsNumber, IsString } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
 
 export class CreateProductDto {
   @IsString()
@@ -10,3 +11,5 @@ export class CreateProductDto {
   @IsNumber()
   public readonly count: number
 }
+
+export class UpdateProductDto extends PartialType(CreateProductDto) {}
