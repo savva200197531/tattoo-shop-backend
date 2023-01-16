@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Cart } from "@/api/user/entities/cart.entity";
+import { Cart } from "@/api/cart/entities/cart.entity";
 
 @Entity()
 export class User extends BaseEntity {

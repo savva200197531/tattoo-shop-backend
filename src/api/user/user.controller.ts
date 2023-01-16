@@ -9,10 +9,9 @@ import {
   Put,
   Body,
   Inject,
-  Get, Param, ParseIntPipe, Post
+  Get, Param, ParseIntPipe
 } from "@nestjs/common";
 import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
-import { AddCartItemDto, RemoveCartItemDto } from "@/api/user/dto/cart.dto";
 
 import { UpdateNameDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
@@ -34,21 +33,4 @@ export class UserController {
   private findUser(@Param('id', ParseIntPipe) id: number) {
     return this.service.findUser(id)
   }
-
-  @Post(':id/cart/add')
-  addItem(
-    @Param('id', ParseIntPipe) id: number, // user id
-    @Body() body: AddCartItemDto
-  ) {
-    return this.service.addCartItem(id, body)
-  }
-
-  // @Put(':id/cart/remove')
-  // removeItem(
-  //   @Param('user_id', ParseIntPipe) user_id: number,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() body: RemoveCartItemDto
-  // ) {
-  //   return this.service.removeCartItem(id)
-  // }
 }
