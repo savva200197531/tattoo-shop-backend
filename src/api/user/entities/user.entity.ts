@@ -7,8 +7,11 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id!: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true })
   public email!: string;
+
+  @Column({ default: false })
+  public isEmailConfirmed!: boolean;
 
   @Exclude()
   @Column({ type: 'varchar' })

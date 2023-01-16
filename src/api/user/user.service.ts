@@ -27,4 +27,16 @@ export class UserService {
       relations: ['cart']
     })
   }
+
+  public findUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email },
+    })
+  }
+
+  public async markEmailAsConfirmed(email: string) {
+    return this.userRepository.update({ email }, {
+      isEmailConfirmed: true
+    });
+  }
 }

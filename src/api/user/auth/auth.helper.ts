@@ -1,25 +1,23 @@
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
-import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, UnauthorizedException, Inject } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/api/user/entities/user.entity';
 
 @Injectable()
 export class AuthHelper {
-  @InjectRepository(User)
-  private readonly repository: Repository<User>;
+  constructor(
+    @InjectRepository(User) private readonly repository: Repository<User>,
+    @Inject(JwtService) private readonly jwtService: JwtService
+  ) {
 
-  private readonly jwt: JwtService;
-
-  constructor(jwt: JwtService) {
-    this.jwt = jwt;
   }
 
   // Decoding the JWT Token
   public async decode(token: string): Promise<unknown> {
-    return this.jwt.decode(token, null);
+    return this.jwtService.decode(token, null);
   }
 
   // Get User by User ID we get from decode()
@@ -29,7 +27,7 @@ export class AuthHelper {
 
   // Generate JWT Token
   public generateToken(user: User): string {
-    return this.jwt.sign({ id: user.id, email: user.email });
+    return this.jwtService.sign({ id: user.id, email: user.email });
   }
 
   // Validate User's password
@@ -46,7 +44,7 @@ export class AuthHelper {
 
   // Validate JWT Token, throw forbidden error if JWT Token is invalid
   private async validate(token: string): Promise<boolean | never> {
-    const decoded: unknown = this.jwt.verify(token);
+    const decoded: unknown = this.jwtService.verify(token);
 
     if (!decoded) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);

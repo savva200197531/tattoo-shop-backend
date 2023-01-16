@@ -9,6 +9,8 @@ import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
+import { EmailConfirmationModule } from "@/api/user/email-confirmation/email-confirmation.module";
+import { JwtAuthGuard } from "@/api/user/auth/auth.guard";
 
 @Module({
   imports: [
@@ -21,8 +23,10 @@ import { JwtStrategy } from './auth.strategy';
       }),
     }),
     TypeOrmModule.forFeature([User]),
+    EmailConfirmationModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthHelper, JwtStrategy],
+  exports: []
 })
 export class AuthModule {}
