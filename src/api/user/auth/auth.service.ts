@@ -1,17 +1,18 @@
+import { Repository } from 'typeorm';
+
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/api/user/entities/user.entity';
-import { Repository } from 'typeorm';
+
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { AuthHelper } from './auth.helper';
 
 @Injectable()
 export class AuthService {
-  @InjectRepository(User)
-  private readonly repository: Repository<User>;
-
-  @Inject(AuthHelper)
-  private readonly helper: AuthHelper;
+  constructor(
+    @InjectRepository(User) private readonly repository: Repository<User>,
+    @Inject(AuthHelper) private readonly helper: AuthHelper
+  ) {}
 
   public async register(body: RegisterDto): Promise<User | never> {
     const { name, email, password }: RegisterDto = body;

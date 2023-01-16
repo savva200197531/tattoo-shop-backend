@@ -1,6 +1,7 @@
+import { Request } from 'express';
+
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
 import { User } from '@/api/user/entities/user.entity';
 
 @Injectable()

@@ -19,8 +19,9 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  @Inject(UserService)
-  private readonly service: UserService;
+  constructor(
+    @Inject(UserService) private readonly service: UserService
+  ) {}
 
   @Put('name')
   @UseGuards(JwtAuthGuard)

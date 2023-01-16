@@ -1,6 +1,7 @@
+import { Repository, UpdateResult } from "typeorm";
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, UpdateResult } from "typeorm";
 import { Product } from "@/api/products/entities/product.entity";
 import { CreateProductDto, UpdateProductDto } from "@/api/products/dto/products.dto";
 

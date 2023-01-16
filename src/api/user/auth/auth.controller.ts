@@ -1,14 +1,17 @@
+import { Request } from 'express';
+
 import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req } from '@nestjs/common';
 import { User } from '@/api/user/entities/user.entity';
+import { AuthGuard } from "@nestjs/passport";
+
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
-import { AuthGuard } from "@nestjs/passport";
 
 @Controller('auth')
 export class AuthController {
-  @Inject(AuthService)
-  private readonly service: AuthService;
+  constructor(
+    @Inject(AuthService) private readonly service: AuthService
+  ) {}
 
   @Post('register')
   @UseInterceptors(ClassSerializerInterceptor)
