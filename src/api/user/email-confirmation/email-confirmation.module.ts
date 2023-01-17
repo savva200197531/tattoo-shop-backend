@@ -16,7 +16,7 @@ import { UserModule } from "@/api/user/user.module";
       }),
     }),
     EmailModule,
-    // UserModule
+    UserModule
   ],
   controllers: [EmailConfirmationController],
   providers: [EmailConfirmationService],

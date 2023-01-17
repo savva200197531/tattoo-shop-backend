@@ -4,13 +4,12 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/api/user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { EmailConfirmationModule } from "@/api/user/email-confirmation/email-confirmation.module";
 
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
-import { EmailConfirmationModule } from "@/api/user/email-confirmation/email-confirmation.module";
-import { JwtAuthGuard } from "@/api/user/auth/auth.guard";
 
 @Module({
   imports: [
@@ -27,6 +26,5 @@ import { JwtAuthGuard } from "@/api/user/auth/auth.guard";
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthHelper, JwtStrategy],
-  exports: []
 })
 export class AuthModule {}
