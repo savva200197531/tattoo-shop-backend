@@ -5,3 +5,8 @@ export class UpdateNameDto {
   @IsOptional()
   public readonly name?: string;
 }
+
+export class GetUserByJwtDto {
+  @IsString()
+  public readonly token: string
+}

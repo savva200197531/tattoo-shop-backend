@@ -9,18 +9,20 @@ import {
   Put,
   Body,
   Inject,
-  Get, Param, ParseIntPipe
+  Get,
+  Param,
+  ParseIntPipe
 } from "@nestjs/common";
-import { JwtAuthGuard } from '@/api/user/auth/auth.guard';
+import { JwtAuthGuard } from "@/api/auth/auth.guard";
 
-import { UpdateNameDto } from './dto/user.dto';
+import { UpdateNameDto } from "./dto/user.dto";
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(
-    @Inject(UserService) private readonly service: UserService
+    @Inject(UserService) private readonly service: UserService,
   ) {}
 
   @Put('name')
@@ -31,6 +33,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   private findUser(@Param('id', ParseIntPipe) id: number) {
     return this.service.findUser(id)
   }

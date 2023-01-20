@@ -1,6 +1,6 @@
 import { User } from "@/api/user/entities/user.entity";
 
-interface RequestWithUser {
+interface RequestWithUser extends Request {
   user: User
 }
 

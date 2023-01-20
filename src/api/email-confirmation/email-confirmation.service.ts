@@ -2,8 +2,8 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { EmailService } from "@/api/email/email.service";
-import VerificationTokenPayload from "@/api/user/email-confirmation/types/verificationTokenPayload.interface";
 import { UserService } from "@/api/user/user.service";
+import VerificationTokenPayload from "@/api/email-confirmation/types/verificationTokenPayload.interface";
 
 @Injectable()
 export class EmailConfirmationService {
@@ -21,7 +21,7 @@ export class EmailConfirmationService {
       expiresIn: `${this.configService.get('JWT_VERIFICATION_TOKEN_EXPIRATION_TIME')}s`
     });
 
-    const url = `${this.configService.get('EMAIL_CONFIRMATION_URL')}?token=${token}`;
+    const url = `${this.configService.get('EMAIL_CONFIRMATION_URL')}/${token}`;
 
     const text = `Welcome to the application. To confirm the email address, click here: ${url}`;
 
@@ -58,11 +58,13 @@ export class EmailConfirmationService {
     }
   }
 
-  public async resendConfirmationLink(userId: number) {
-    const user = await this.userService.findUser(userId);
-    if (user.isEmailConfirmed) {
+  public async resendConfirmationLink(id: number) {
+    const { isEmailConfirmed, email } = await this.userService.findUser(id)
+
+    if (isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
-    await this.sendVerificationLink(user.email);
+
+    await this.sendVerificationLink(email);
   }
 }
