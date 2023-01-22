@@ -29,6 +29,6 @@ export class ProductsController {
 
   @Delete(':id')
   private remove(@Param('id', ParseIntPipe) id: number) {
-    this.productsService.remove(id)
+    return this.productsService.remove(id)
   }
 }

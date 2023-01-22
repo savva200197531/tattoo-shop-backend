@@ -1,7 +1,12 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn
+} from "typeorm";
 
 import { User } from "@/api/user/entities/user.entity";
-import { Product } from "@/api/products/entities/product.entity";
 
 @Entity()
 export class Cart extends BaseEntity {
@@ -11,9 +16,8 @@ export class Cart extends BaseEntity {
   @Column()
   count: number;
 
-  @OneToOne(() => Product)
-  @JoinColumn()
-  product: Product;
+  @Column()
+  product_id: number;
 
   @ManyToOne(() => User, (user) => user.cart)
   user: User;
