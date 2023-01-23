@@ -3,7 +3,6 @@ import { Repository } from "typeorm";
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Cart } from "@/api/cart/entities/cart.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Product } from "@/api/products/entities/product.entity";
 import { ProductsService } from "@/api/products/products.service";
 import { UserService } from "@/api/user/user.service";
 import { AddToCartDto } from "@/api/cart/dto/cart.dto";
@@ -11,7 +10,6 @@ import { AddToCartDto } from "@/api/cart/dto/cart.dto";
 @Injectable()
 export class CartService {
   constructor(
-    @InjectRepository(Product) private readonly productRepository: Repository<Product>,
     @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
     private readonly productsService: ProductsService,
     private readonly userService: UserService
