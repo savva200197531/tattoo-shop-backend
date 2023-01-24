@@ -6,17 +6,15 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   UseGuards,
-  Get,
-  Headers,
+  Req
 } from "@nestjs/common";
 import { User } from '@/api/user/entities/user.entity';
-import { AuthGuard } from "@nestjs/passport";
 import { EmailConfirmationService } from "@/api/email-confirmation/email-confirmation.service";
 import { JwtAuthGuard } from "@/api/auth/auth.guard";
-import getJwtFromHeaderHelper from "@/common/helper/getJwtFromHeader.helper";
 
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
+import RequestWithUser from "@/api/auth/types/requestWithUser.inteface";
 
 @Controller('auth')
 export class AuthController {
@@ -40,21 +38,8 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(AuthGuard('jwt'))
-  private refresh(@Headers() headers): Promise<string> {
-    return this.authService.refresh(getJwtFromHeaderHelper(headers));
-  }
-
-  // @Post('refresh')
-  // @UseGuards(AuthGuard('jwt'))
-  // private refresh(@Req() { user }: RequestWithUser): Promise<string | never> {
-  //   return this.authService.refresh(user);
-  // }
-
-  @Get('get-user-by-jwt')
   @UseGuards(JwtAuthGuard)
-  private getUserByJwt(@Headers() headers): Promise<User> {
-    return this.authService.getUserByJwt(getJwtFromHeaderHelper(headers))
+  private refresh(@Req() { user }: RequestWithUser): Promise<string | never> {
+    return this.authService.refresh(user);
   }
 }

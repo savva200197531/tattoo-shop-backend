@@ -52,23 +52,9 @@ export class AuthService {
     return this.authHelper.generateToken(user);
   }
 
-  public async getUserByJwt(token: string): Promise<User> {
-    const jwtUser = await this.authHelper.decode(token)
-
-    const user = this.userService.findUser(jwtUser.id)
-
-    if (!user) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
-    }
-
-    return user
-  }
-
-  public async refresh(token: string): Promise<string> {
-    const user = await this.getUserByJwt(token)
-
+  public async refresh(user: User): Promise<string> {
     await this.userRepository.update(user.id, { lastLoginAt: new Date() });
 
-    return this.authHelper.generateToken(user)
+    return this.authHelper.generateToken(user);
   }
 }
