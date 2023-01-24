@@ -32,7 +32,6 @@ export class AuthController {
   }
 
   @Post('login')
-  // @UseGuards(EmailConfirmationGuard)
   private login(@Body() body: LoginDto): Promise<string | never> {
     return this.authService.login(body);
   }
