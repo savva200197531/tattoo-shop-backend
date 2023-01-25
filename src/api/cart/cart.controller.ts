@@ -1,30 +1,33 @@
-import { Controller, Body, Param, ParseIntPipe, Put, Get } from "@nestjs/common";
+import { Controller, Body, Param, ParseIntPipe, Put, Get, Delete, UseGuards } from "@nestjs/common";
 import { AddToCartDto } from "@/api/cart/dto/cart.dto";
 
 import { CartService } from './cart.service';
+import { Cart } from "@/api/cart/entities/cart.entity";
+import { DeleteResult } from "typeorm/query-builder/result/DeleteResult";
+import { JwtAuthGuard } from "@/api/auth/auth.guard";
 
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Put(':user_id/add')
+  @Put(':user_id')
+  @UseGuards(JwtAuthGuard)
   addItem(
     @Param('user_id', ParseIntPipe) user_id: number,
     @Body() body: AddToCartDto
-  ) {
+  ): Promise<DeleteResult | Cart> {
     return this.cartService.addToCart(user_id, body)
   }
 
-  // @Patch(':user_id/remove')
-  // removeItem(
-  //   @Param('user_id', ParseIntPipe) user_id: number,
-  //   @Body() body: RemoveCartItemDto
-  // ) {
-  //   return this.cartService.removeCartItem(user_id, body)
-  // }
-
   @Get(':user_id')
-  findAll(@Param('user_id', ParseIntPipe) user_id: number) {
+  @UseGuards(JwtAuthGuard)
+  findAll(@Param('user_id', ParseIntPipe) user_id: number): Promise<Cart[]> {
     return this.cartService.findAll(user_id)
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  deleteFromCart(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
+    return this.cartService.deleteFromCart(id)
   }
 }

@@ -21,6 +21,9 @@ export class Cart extends BaseEntity {
   @JoinColumn()
   public user: User;
 
+  @Column()
+  public price: number
+
   @ManyToOne(() => Product, (product) => product.cart)
   @JoinColumn()
   public product: Product;
