@@ -21,7 +21,7 @@ export class CartService {
   }
 
   public async findAll(user_id: number): Promise<Cart[]> {
-    return this.cartRepository.find({ where: { user: { id: user_id } }, relations: ["user"] })
+    return this.cartRepository.find({ where: { user: { id: user_id } }, relations: ["user", "product"] })
   }
 
   // async addCartItem(user_id: number, param: AddCartItemDto): Promise<Cart | UpdateResult> {
@@ -97,7 +97,8 @@ export class CartService {
     const user = await this.userService.findUser(user_id)
     const product = await this.productsService.findProduct(product_id)
     const cartItems = await this.findAll(user_id)
-    const duplicatedCartItem = cartItems.find(item => item.product_id === product_id)
+    const duplicatedCartItem = cartItems.find(({ product }) => product.id === product_id)
+    // const duplicatedCartItem = undefined
 
     if (!user) {
       throw new BadRequestException('user not found')
@@ -126,7 +127,7 @@ export class CartService {
     } else {
       const newCartItem = this.cartRepository.create({
         count,
-        product_id,
+        product,
         user,
       });
 

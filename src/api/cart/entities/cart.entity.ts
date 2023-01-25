@@ -1,12 +1,13 @@
 import {
   BaseEntity,
   Column,
-  Entity,
+  Entity, JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
 
 import { User } from "@/api/user/entities/user.entity";
+import { Product } from "@/api/products/entities/product.entity";
 
 @Entity()
 export class Cart extends BaseEntity {
@@ -14,11 +15,13 @@ export class Cart extends BaseEntity {
   public id!: number;
 
   @Column()
-  count: number;
-
-  @Column()
-  product_id: number;
+  public count: number;
 
   @ManyToOne(() => User, (user) => user.cart)
-  user: User;
+  @JoinColumn()
+  public user: User;
+
+  @ManyToOne(() => Product, (product) => product.cart)
+  @JoinColumn()
+  public product: Product;
 }
