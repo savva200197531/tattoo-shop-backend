@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import { CreateProductDto, UpdateProductDto } from "@/api/products/dto/products.dto";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
+import { CreateProductDto, GetProductsFilterDto, UpdateProductDto } from "@/api/products/dto/products.dto";
 
 import { ProductsService } from './products.service';
+import { Product } from "@/api/products/entities/product.entity";
 
 @Controller('products')
 export class ProductsController {
@@ -13,7 +14,13 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
+  findAll(
+    @Query() query
+  ): Promise<Product[]> {
+    // if (Object.keys(filterDto).length) {
+    //   // return this.productsService.findProductsWithFilters(filterDto)
+    // }
+
     return this.productsService.findAll();
   }
 

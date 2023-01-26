@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Cart } from "@/api/cart/entities/cart.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductsService } from "@/api/products/products.service";
@@ -12,8 +12,8 @@ import { DeleteResult } from "typeorm/query-builder/result/DeleteResult";
 export class CartService {
   constructor(
     @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
-    private readonly productsService: ProductsService,
-    private readonly userService: UserService
+    @Inject(ProductsService) private readonly productsService: ProductsService,
+    @Inject(UserService) private readonly userService: UserService
   ) {}
 
 
@@ -25,13 +25,15 @@ export class CartService {
     return this.cartRepository.find({ where: { user: { id: user_id } }, relations: ["user", "product"] })
   }
 
+  public findDuplicate = (user_id: number, product_id: number) => {
+    return this.cartRepository.findOne({ where: { user: { id: user_id }, product: { id: product_id } }, relations: ["user", "product"] })
+  }
+
   public async addToCart(user_id: number, param: AddToCartDto): Promise<DeleteResult | Cart> {
     const { product_id, count } = param
     const user = await this.userService.findUser(user_id)
     const product = await this.productsService.findProduct(product_id)
-    const cartItems = await this.findAll(user_id)
-    const duplicatedCartItem = cartItems.find(({ product }) => product.id === product_id)
-    // const duplicatedCartItem = undefined
+    const duplicatedCartItem = await this.findDuplicate(user_id, product_id)
 
     if (!user) {
       throw new BadRequestException('user not found')

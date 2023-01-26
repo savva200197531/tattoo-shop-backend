@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Cart } from "@/api/cart/entities/cart.entity";
+import { Favorite } from "@/api/favorite/entities/favorite.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -24,5 +25,8 @@ export class User extends BaseEntity {
   public lastLoginAt: Date | null;
 
   @OneToMany(() => Cart, cart => cart.user)
-  public cart: Cart[]
+  public cart?: Cart[]
+
+  @OneToMany(() => Favorite, favorite => favorite.user)
+  public favorite?: Favorite[]
 }
