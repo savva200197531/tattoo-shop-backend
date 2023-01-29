@@ -20,6 +20,10 @@ export class FavoriteService {
     return this.favoriteRepository.find({ where: { user: { id: user_id } }, relations: ["user", "product"] })
   }
 
+  public findOneByProductAndUser(user_id: number, product_id: number): Promise<Favorite> {
+    return this.favoriteRepository.findOne({ where: { user: { id: user_id }, product: { id: product_id } } })
+  }
+
   public findDuplicate = (user_id: number, product_id: number) => {
     return this.favoriteRepository.findOne({ where: { user: { id: user_id }, product: { id: product_id } }, relations: ["user"] })
   }

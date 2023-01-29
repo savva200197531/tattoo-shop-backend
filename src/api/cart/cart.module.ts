@@ -11,6 +11,7 @@ import { CartController } from './cart.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([User, Cart]), UserModule, ProductsModule],
   controllers: [CartController],
-  providers: [CartService]
+  providers: [CartService],
+  exports: [CartService]
 })
 export class CartModule {}

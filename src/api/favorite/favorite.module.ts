@@ -10,6 +10,7 @@ import { FavoriteController } from './favorite.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Favorite]), ProductsModule, UserModule],
   controllers: [FavoriteController],
-  providers: [FavoriteService]
+  providers: [FavoriteService],
+  exports: [FavoriteService],
 })
 export class FavoriteModule {}

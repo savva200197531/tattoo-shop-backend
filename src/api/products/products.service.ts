@@ -1,6 +1,6 @@
 import { Repository, UpdateResult } from "typeorm";
 
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Product } from "@/api/products/entities/product.entity";
 import { CreateProductDto, GetProductsFilterDto, UpdateProductDto } from "@/api/products/dto/products.dto";
@@ -8,7 +8,7 @@ import { CreateProductDto, GetProductsFilterDto, UpdateProductDto } from "@/api/
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectRepository(Product) private readonly repository: Repository<Product>
+    @InjectRepository(Product) private readonly repository: Repository<Product>,
   ) {}
 
 
@@ -19,12 +19,10 @@ export class ProductsService {
   }
 
   public findAll(): Promise<Product[]> {
-    return this.repository.find();
+    return this.repository.find()
   }
 
-  public findProductsWithFilters(filterDto: GetProductsFilterDto) {
-
-  }
+  public findProductsWithFilters(filterDto: GetProductsFilterDto) {}
 
   public findProduct(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });
