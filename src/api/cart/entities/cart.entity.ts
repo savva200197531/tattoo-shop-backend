@@ -24,7 +24,11 @@ export class Cart extends BaseEntity {
   @Column()
   public price: number
 
-  @ManyToOne(() => Product, (product) => product.cart)
+  @ManyToOne(
+    () => Product,
+    (product) => product.cart,
+    { orphanedRowAction: 'delete', onDelete: 'CASCADE' }
+  )
   @JoinColumn()
   public product: Product;
 }

@@ -28,6 +28,6 @@ export class CartController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   deleteFromCart(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
-    return this.cartService.deleteFromCart(id)
+    return this.cartService.remove(id)
   }
 }

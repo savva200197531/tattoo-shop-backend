@@ -11,7 +11,11 @@ export class Favorite extends BaseEntity {
   @JoinColumn()
   public user: User;
 
-  @ManyToOne(() => Product, (product) => product.favorite)
+  @ManyToOne(
+    () => Product,
+    (product) => product.favorite,
+    { orphanedRowAction: 'delete', onDelete: 'CASCADE' }
+  )
   @JoinColumn()
   public product: Product;
 }

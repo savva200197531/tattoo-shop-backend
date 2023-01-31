@@ -16,24 +16,31 @@ export class CartService {
     @Inject(UserService) private readonly userService: UserService
   ) {}
 
-
-  public findCartItem(id: number, user_id: number): Promise<Cart> {
-    return this.cartRepository.findOne({ where: { id, user: { id: user_id } }, relations: ["user", "product"] })
-  }
-
   public async findAll(user_id: number): Promise<Cart[]> {
     return this.cartRepository.find({ where: { user: { id: user_id } }, relations: ["user", "product"] })
   }
 
-  public findDuplicate = (user_id: number, product_id: number) => {
-    return this.cartRepository.findOne({ where: { user: { id: user_id }, product: { id: product_id } }, relations: ["user", "product"] })
+  // public findOne(id: number): Promise<Cart> {
+  //   return this.cartRepository.findOne({ where: { id }, relations: ["user", "product"] })
+  // }
+  //
+  // findOneByUser(id: number, user_id: number): Promise<Cart> {
+  //   return this.cartRepository.findOne({ where: { id, user: { id: user_id } }, relations: ["user", "product"] })
+  // }
+
+  // findOneByProduct(id: number, user_id: number): Promise<Cart> {
+  //   return this.cartRepository.findOne({ where: { id, user: { id: user_id } }, relations: ["user", "product"] })
+  // }
+
+  public findOneByProductAndUser = (product_id: number, user_id: number) => {
+    return this.cartRepository.findOne({ where: { product: { id: product_id }, user: { id: user_id } }, relations: ["user", "product"] })
   }
 
   public async addToCart(user_id: number, param: AddToCartDto): Promise<DeleteResult | Cart> {
     const { product_id, count } = param
     const user = await this.userService.findUser(user_id)
     const product = await this.productsService.findProduct(product_id)
-    const duplicatedCartItem = await this.findDuplicate(user_id, product_id)
+    const duplicatedCartItem = await this.findOneByProductAndUser(product_id, user_id)
 
     if (!user) {
       throw new BadRequestException('user not found')
@@ -49,7 +56,7 @@ export class CartService {
 
     if (duplicatedCartItem) {
       if (count === 0) {
-        return this.deleteFromCart(duplicatedCartItem.id)
+        return this.remove(duplicatedCartItem.id)
       }
 
       if (count === duplicatedCartItem.count) {
@@ -72,7 +79,7 @@ export class CartService {
     }
   }
 
-  public deleteFromCart = (id: number): Promise<DeleteResult> => {
+  public remove = (id: number): Promise<DeleteResult> => {
     return this.cartRepository.delete({ id })
   }
 }

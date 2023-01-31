@@ -16,9 +16,15 @@ export class Product extends BaseEntity {
   @Column()
   public count!: number;
 
-  @OneToMany(() => Cart, (cart) => cart.product)
-  public cart?: Cart[] // !!!
+  @OneToMany(
+    () => Cart,
+    (cart) => cart.product
+  )
+  public cart?: Cart[];
 
-  @OneToMany(() => Favorite, (cart) => cart.product)
-  public favorite?: Favorite[] // !!!
+  @OneToMany(
+    () => Favorite,
+    (cart) => cart.product
+  )
+  public favorite?: Favorite[]
 }
