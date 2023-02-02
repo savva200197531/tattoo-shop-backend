@@ -1,25 +1,34 @@
 import { Repository, UpdateResult } from "typeorm";
 
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Product } from "@/api/products/entities/product.entity";
-import { CreateProductDto, GetProductsFilterDto, UpdateProductDto } from "@/api/products/dto/products.dto";
+import { GetProductsFilterDto } from "@/api/products/dto/products.dto";
+import { CreateProduct, UpdateProduct } from "@/api/products/types/product";
+import { FilesService } from "@/api/files/files.service";
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product) private readonly repository: Repository<Product>,
+    @Inject(forwardRef(() => FilesService)) private readonly filesService: FilesService
   ) {}
 
 
-  public create(createProductDto: CreateProductDto): Promise<Product> {
-    const newProduct = this.repository.create(createProductDto);
+  public async create({ images, ...rest }: CreateProduct): Promise<Product> {
+    const newProduct = this.repository.create(rest);
 
-    return this.repository.save(newProduct)
+    const savedProduct = await this.repository.save(newProduct)
+
+    if (images.length) {
+      images.forEach(img => this.filesService.uploadProductImg(img, savedProduct.id))
+    }
+
+    return savedProduct
   }
 
   public findAll(): Promise<Product[]> {
-    return this.repository.find()
+    return this.repository.find({ relations: ['images'] })
   }
 
   public findProductsWithFilters(filterDto: GetProductsFilterDto) {}
@@ -28,7 +37,7 @@ export class ProductsService {
     return this.repository.findOneBy({ id });
   }
 
-  public update(id: number, updateProductDto: UpdateProductDto): Promise<UpdateResult> {
+  public update(id: number, updateProductDto: UpdateProduct): Promise<UpdateResult> {
     return this.repository.update({ id }, { ...updateProductDto });
   }
 

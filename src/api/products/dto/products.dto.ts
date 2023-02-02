@@ -1,18 +1,15 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 
 export class CreateProductDto {
   @IsString()
   public readonly name: string
 
-  @IsNumber()
-  public readonly price: number
+  @IsString()
+  public readonly price: string
 
-  @IsNumber()
-  public readonly count: number
-
-  // @IsString()
-  // public readonly type?: string
+  @IsString()
+  public readonly count: string
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

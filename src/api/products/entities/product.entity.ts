@@ -29,6 +29,7 @@ export class Product extends BaseEntity {
   )
   public favorite?: Favorite[]
 
+  // @JoinColumn({ name: 'img_ids' })
   @OneToMany(
     () => ProductImg,
     (img) => img.product

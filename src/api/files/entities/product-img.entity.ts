@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "@/api/products/entities/product.entity";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class ProductImg extends BaseEntity {
@@ -7,8 +8,9 @@ export class ProductImg extends BaseEntity {
   public id!: number;
 
   @Column()
-  public filename: number;
+  public filename: string;
 
+  @Exclude()
   @Column({ type: 'bytea' })
   public data!: Uint8Array;
 
