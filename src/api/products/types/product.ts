@@ -1,10 +1,12 @@
-import { ExpressMulterFile } from "@/api/types/file";
+import { ExpressMulterFile } from '@/api/types/file';
 
 export type CreateProduct = {
-  name: string
-  price: number
-  count: number
-  images?: ExpressMulterFile[]
-}
+  name: string;
+  price: number;
+  count: number;
+  images?: ExpressMulterFile[];
+};
 
-export type UpdateProduct = Partial<CreateProduct>
+export type UpdateProduct = Partial<CreateProduct> & {
+  img_ids?: number[];
+};
