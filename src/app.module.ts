@@ -23,6 +23,8 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
         EMAIL_USER: Joi.string().required(),
         EMAIL_PASSWORD: Joi.string().required(),
         UPLOADED_FILES_DESTINATION: Joi.string().required(),
+        SHOP_ID: Joi.string().required(),
+        PAYMENT_TOKEN: Joi.string().required(),
       }),
       isGlobal: true,
     }),

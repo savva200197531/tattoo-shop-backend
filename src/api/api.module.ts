@@ -9,6 +9,7 @@ import { CartModule } from './cart/cart.module';
 import { EmailModule } from './email/email.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { FilesModule } from './files/files.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { FilesModule } from './files/files.module';
     ProductsModule,
     UserModule,
     FavoriteModule,
-    FilesModule
+    FilesModule,
+    PaymentModule
   ],
 })
 export class ApiModule {}

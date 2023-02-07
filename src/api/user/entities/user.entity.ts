@@ -1,8 +1,15 @@
 import { Exclude } from 'class-transformer';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Cart } from "@/api/cart/entities/cart.entity";
-import { Favorite } from "@/api/favorite/entities/favorite.entity";
-import Role from "@/api/user/role.enum";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cart } from '@/api/cart/entities/cart.entity';
+import { Favorite } from '@/api/favorite/entities/favorite.entity';
+import { Order } from '@/api/orders/entities/order.entity';
+import Role from '@/api/user/role.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -25,16 +32,19 @@ export class User extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true, default: null })
   public lastLoginAt: Date | null;
 
-  @OneToMany(() => Cart, cart => cart.user)
-  public cart: Cart[]
+  @OneToMany(() => Cart, (cart) => cart.user)
+  public cart: Cart[];
 
-  @OneToMany(() => Favorite, favorite => favorite.user)
-  public favorite: Favorite[]
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  public favorite: Favorite[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  public orders: Order[];
 
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.User
+    default: Role.User,
   })
-  public role: Role
+  public role: Role;
 }

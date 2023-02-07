@@ -15,8 +15,8 @@ export class ProductsService {
     private readonly filesService: FilesService,
   ) {}
 
-  public async create({ images, ...rest }: CreateProduct): Promise<Product> {
-    const newProduct = this.repository.create(rest);
+  public async create({ images, ...params }: CreateProduct): Promise<Product> {
+    const newProduct = this.repository.create(params);
 
     const savedProduct = await this.repository.save(newProduct);
 
