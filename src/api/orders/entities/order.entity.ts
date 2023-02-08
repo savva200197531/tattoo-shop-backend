@@ -21,13 +21,37 @@ export class Order extends BaseEntity {
   public price: number;
 
   @Column()
-  public phone: number;
+  public phone: string;
 
   @Column()
   public payment_method: IPaymentMethodType;
 
   @Column()
-  public address: number;
+  public address: string;
+
+  @Column()
+  public surname: string;
+
+  @Column()
+  public name: string;
+
+  @Column()
+  public lastname: string;
+
+  @Column()
+  public email: string;
+
+  @Column()
+  public region: string;
+
+  @Column()
+  public city: string;
+
+  @Column()
+  public comment: string;
+
+  @Column()
+  public status: string;
 
   @ManyToOne(() => User, (user) => user.orders, {
     orphanedRowAction: 'delete',

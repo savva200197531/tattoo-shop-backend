@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 import {
   BadRequestException,
@@ -53,7 +53,7 @@ export class CartService {
   public async addToCart(
     user_id: number,
     param: AddToCartDto,
-  ): Promise<DeleteResult | Cart> {
+  ): Promise<object | Cart | UpdateResult> {
     const { product_id, count } = param;
     const user = await this.userService.findUser(user_id);
     const product = await this.productsService.findProduct(product_id);
@@ -76,7 +76,9 @@ export class CartService {
 
     if (duplicatedCartItem) {
       if (count === 0) {
-        return this.remove(duplicatedCartItem.id);
+        await this.remove(duplicatedCartItem.id);
+
+        return { action: 'delete' };
       }
 
       if (count === duplicatedCartItem.count) {
@@ -102,4 +104,10 @@ export class CartService {
   public remove = (id: number): Promise<DeleteResult> => {
     return this.cartRepository.delete({ id });
   };
+
+  // public getTotalPrice = async (user_id: number): Promise<number> => {
+  //   const cart = await this.findAll(user_id);
+  //
+  //   return cart.reduce((p, c) => p + c.price, 0);
+  // };
 }
