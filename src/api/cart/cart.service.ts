@@ -12,6 +12,7 @@ import { ProductsService } from '@/api/products/products.service';
 import { UserService } from '@/api/user/user.service';
 import { AddToCartDto } from '@/api/cart/dto/cart.dto';
 import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
+import { CartResponse } from '@/api/cart/types/types';
 
 @Injectable()
 export class CartService {
@@ -21,14 +22,20 @@ export class CartService {
     @Inject(UserService) private readonly userService: UserService,
   ) {}
 
-  public async findAll(user_id: number): Promise<Cart[]> {
-    return this.cartRepository.find({
+  public async findAll(user_id: number): Promise<CartResponse> {
+    const items = await this.cartRepository.find({
       where: { user: { id: user_id } },
       relations: ['user', 'product'],
       order: {
         id: 'DESC',
       },
     });
+
+    return {
+      items: items,
+      totalPrice: items.reduce((p, c) => p + c.price, 0),
+      totalProductsCount: items.reduce((p, c) => p + c.count, 0),
+    };
   }
 
   // public findOne(id: number): Promise<Cart> {

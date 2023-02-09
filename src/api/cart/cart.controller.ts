@@ -16,6 +16,7 @@ import { Cart } from '@/api/cart/entities/cart.entity';
 import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
 import { JwtAuthGuard } from '@/api/auth/auth.guard';
 import { UpdateResult } from 'typeorm';
+import { CartResponse } from '@/api/cart/types/types';
 
 @Controller('cart')
 export class CartController {
@@ -32,7 +33,9 @@ export class CartController {
 
   @Get(':user_id')
   @UseGuards(JwtAuthGuard)
-  findAll(@Param('user_id', ParseIntPipe) user_id: number): Promise<Cart[]> {
+  findAll(
+    @Param('user_id', ParseIntPipe) user_id: number,
+  ): Promise<CartResponse> {
     return this.cartService.findAll(user_id);
   }
 
