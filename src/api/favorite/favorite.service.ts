@@ -46,7 +46,7 @@ export class FavoriteService {
   ): Promise<Favorite> {
     const { product_id } = param;
 
-    const product = await this.productsService.findProduct(product_id);
+    const product = await this.productsService.findOne(product_id);
     const user = await this.userService.findUser(user_id);
     const duplicatedFavoriteProduct = await this.findDuplicate(
       user_id,

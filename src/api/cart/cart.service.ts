@@ -63,7 +63,7 @@ export class CartService {
   ): Promise<object | Cart | UpdateResult> {
     const { product_id, count } = param;
     const user = await this.userService.findUser(user_id);
-    const product = await this.productsService.findProduct(product_id);
+    const product = await this.productsService.findOne(product_id);
     const duplicatedCartItem = await this.findOneByProductAndUser(
       product_id,
       user_id,

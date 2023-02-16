@@ -10,6 +10,7 @@ import { EmailModule } from './email/email.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { FilesModule } from './files/files.module';
 import { PaymentModule } from './payment/payment.module';
+import { SliderModule } from './slider/slider.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { PaymentModule } from './payment/payment.module';
     UserModule,
     FavoriteModule,
     FilesModule,
-    PaymentModule
+    PaymentModule,
+    SliderModule
   ],
 })
 export class ApiModule {}

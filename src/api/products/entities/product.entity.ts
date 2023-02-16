@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Cart } from '@/api/cart/entities/cart.entity';
 import { Favorite } from '@/api/favorite/entities/favorite.entity';
-import { LocalProductImg } from '@/api/files/entities/local-product-img.entity';
+import LocalFile from '@/api/files/entities/local-file.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -31,8 +31,8 @@ export class Product extends BaseEntity {
   public favorite?: Favorite[];
 
   @JoinColumn({ name: 'img_ids' })
-  @OneToMany(() => LocalProductImg, (img) => img.product)
-  public images?: LocalProductImg[];
+  @OneToMany(() => LocalFile, (img) => img.id)
+  public images?: LocalFile[];
 
   @Column('int', { array: true, nullable: true })
   img_ids?: number[];

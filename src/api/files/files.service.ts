@@ -1,58 +1,33 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProductsService } from '@/api/products/products.service';
-import { LocalProductImg } from '@/api/files/entities/local-product-img.entity';
+import LocalFile from '@/api/files/entities/local-file.entity';
 import * as fs from 'fs';
 import { join } from 'path';
 
 @Injectable()
 export class FilesService {
   constructor(
-    @InjectRepository(LocalProductImg)
-    private readonly localProductImgRepository: Repository<LocalProductImg>,
-    @Inject(forwardRef(() => ProductsService))
-    private readonly productsService: ProductsService,
+    @InjectRepository(LocalFile)
+    private readonly localFileRepository: Repository<LocalFile>,
   ) {}
 
-  async getProductImgById(id: number): Promise<LocalProductImg> {
-    const img = await this.localProductImgRepository.findOneBy({ id });
+  async findOne(id: number): Promise<LocalFile> {
+    const img = await this.localFileRepository.findOneBy({ id });
     if (!img) {
       throw new NotFoundException();
     }
     return img;
   }
 
-  async saveLocalProductImgData(imgData: LocalFileDto, product_id: number) {
-    const product = await this.productsService.findProduct(product_id);
+  async create(fileData: LocalFileDto) {
+    const newFile = await this.localFileRepository.create(fileData);
 
-    const newImg = await this.localProductImgRepository.create({
-      product,
-      ...imgData,
-    });
-
-    const savedImg = await this.localProductImgRepository.save(newImg);
-
-    let imgIds = [];
-    if (product.img_ids) {
-      imgIds.push(...product.img_ids);
-    }
-    imgIds.push(savedImg.id);
-
-    await this.productsService.update(product_id, {
-      img_ids: imgIds,
-    });
-
-    return savedImg;
+    return this.localFileRepository.save(newFile);
   }
 
-  async removeLocalProductImg(id: number) {
-    const file = await this.getProductImgById(id);
+  async remove(id: number) {
+    const file = await this.findOne(id);
 
     await fs.unlink(join(process.cwd(), file.path), (err) => {
       if (err) {
@@ -60,5 +35,7 @@ export class FilesService {
         return err;
       }
     });
+
+    return this.localFileRepository.delete({ id });
   }
 }

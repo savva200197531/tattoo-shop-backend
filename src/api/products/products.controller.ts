@@ -24,7 +24,7 @@ import Role from '@/api/user/role.enum';
 import { ExpressMulterFile } from '@/api/types/file';
 
 import { ProductsService } from './products.service';
-import LocalFilesInterceptor from '@/api/files/local-files.interceptor';
+import LocalFilesInterceptor from '@/api/files/interceptors/local-files.interceptor';
 
 @Controller('products')
 export class ProductsController {
@@ -63,7 +63,7 @@ export class ProductsController {
 
   @Get(':id')
   findProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.findProduct(id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')

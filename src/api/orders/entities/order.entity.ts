@@ -8,9 +8,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Product } from '@/api/products/entities/product.entity';
 import { User } from '@/api/user/entities/user.entity';
 import { IPaymentMethodType } from '@a2seven/yoo-checkout/build/types';
+import { OrderProduct } from '@/api/orders/entities/order-product.entity';
 
 @Entity()
 export class Order extends BaseEntity {
@@ -60,7 +60,7 @@ export class Order extends BaseEntity {
   @JoinColumn()
   public user: User;
 
-  @ManyToMany(() => Product)
+  @ManyToMany(() => OrderProduct)
   @JoinTable()
-  public products: Product[];
+  public products: OrderProduct[];
 }

@@ -15,12 +15,12 @@ import { join } from 'path';
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Get('product-img/:id')
-  async getProductImgById(
+  @Get(':id')
+  async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const file = await this.filesService.getProductImgById(id);
+    const file = await this.filesService.findOne(id);
 
     const stream = createReadStream(join(process.cwd(), file.path));
 
