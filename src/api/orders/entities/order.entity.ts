@@ -53,6 +53,9 @@ export class Order extends BaseEntity {
   @Column()
   public status: string;
 
+  @Column({ type: 'timestamp' })
+  public date: Date;
+
   @ManyToOne(() => User, (user) => user.orders, {
     orphanedRowAction: 'delete',
     onDelete: 'CASCADE',

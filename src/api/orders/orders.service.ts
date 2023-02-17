@@ -57,6 +57,7 @@ export class OrdersService {
       ...params,
       user,
       products,
+      date: new Date(),
       status: 'Ожидает оплаты',
     });
 
