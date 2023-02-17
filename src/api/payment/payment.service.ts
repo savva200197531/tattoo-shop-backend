@@ -4,7 +4,11 @@ import {
   CreatePaymentDto,
   GetPaymentStatusDto,
 } from '@/api/payment/dto/payment.dto';
-import { ICreatePayment, YooCheckout } from '@a2seven/yoo-checkout';
+import {
+  ICapturePayment,
+  ICreatePayment,
+  YooCheckout,
+} from '@a2seven/yoo-checkout';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 
@@ -40,7 +44,24 @@ export class PaymentService {
     return this.checkout.createPayment(createPayload, idempotenceKey);
   }
 
-  getPaymentStatus(params: GetPaymentStatusDto) {
+  async getPaymentStatus(params: GetPaymentStatusDto) {
     console.log(params);
+    if (params.event !== 'payment.waiting_for_capture') return;
+
+    const idempotenceKey = uuidv4();
+
+    const capturePayload: ICapturePayment = {
+      amount: params.object.amount,
+    };
+
+    const payment = await this.checkout.capturePayment(
+      params.object.id,
+      capturePayload,
+      idempotenceKey,
+    );
+
+    console.log(payment);
+
+    return payment;
   }
 }

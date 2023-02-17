@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { CreatePaymentDto, GetPaymentStatusDto } from './dto/payment.dto';
+import { CreatePaymentDto } from './dto/payment.dto';
 
 @Controller('payment')
 export class PaymentController {
@@ -11,9 +11,13 @@ export class PaymentController {
     return this.paymentService.create(body);
   }
 
-  @Get('get-payment-status')
+  // @Get('get-payment-status')
+  // getPaymentStatus(@Body() body: any) {
+  //   return this.paymentService.getPaymentStatus(body);
+  // }
+
+  @Post('status')
   getPaymentStatus(@Body() body: any) {
-    console.log(123);
     return this.paymentService.getPaymentStatus(body);
   }
 }

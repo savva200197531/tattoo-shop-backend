@@ -1,4 +1,7 @@
-import { IsNumber, IsString, Max } from 'class-validator';
+import { IsNumber, IsString, MaxLength } from 'class-validator';
+import { IAmount } from '@a2seven/yoo-checkout/build/types';
+import { IPaymentStatus } from '@a2seven/yoo-checkout/build/types/IPaymentStatus';
+import { IWebHookEvent } from '@a2seven/yoo-checkout/build/types/IWebHookEvent';
 
 export class CreatePaymentDto {
   @IsNumber()
@@ -8,11 +11,38 @@ export class CreatePaymentDto {
   readonly return_url: string;
 
   @IsString()
-  @Max(128)
+  @MaxLength(128)
   readonly description: string;
-
-  @IsNumber()
-  readonly product_id: number;
 }
 
-export class GetPaymentStatusDto {}
+class ObjectPayment {
+  id: string;
+  status: IPaymentStatus;
+  amount: IAmount;
+  description: string;
+  recipient: { account_id: string; gateway_id: string };
+  payment_method: {
+    type: string;
+    id: string;
+    saved: boolean;
+    title: string;
+    card: [Object];
+  };
+  created_at: string;
+  expires_at: string;
+  test: boolean;
+  paid: boolean;
+  refundable: boolean;
+  metadata: object;
+  authorization_details: {
+    rrn: string;
+    auth_code: string;
+    three_d_secure: [Object];
+  };
+}
+
+export class GetPaymentStatusDto {
+  event: IWebHookEvent;
+  type: string;
+  object: ObjectPayment;
+}

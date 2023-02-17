@@ -63,11 +63,11 @@ export class OrdersService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    if (savedOrder) {
-      await Promise.all(
-        cart.items.map((cartItem) => this.cartService.remove(cartItem.id)),
-      );
-    }
+    // if (savedOrder) {
+    //   await Promise.all(
+    //     cart.items.map((cartItem) => this.cartService.remove(cartItem.id)),
+    //   );
+    // }
 
     return savedOrder;
   }
