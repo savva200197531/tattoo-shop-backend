@@ -3,8 +3,11 @@ import { Repository, UpdateResult } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '@/api/products/entities/product.entity';
-import { GetProductsFilterDto } from '@/api/products/dto/products.dto';
-import { CreateProduct, UpdateProduct } from '@/api/products/types/product';
+import {
+  CreateProductDto,
+  GetProductsFilterDto,
+  UpdateProductDto,
+} from '@/api/products/dto/products.dto';
 import { FilesService } from '@/api/files/files.service';
 import { from } from 'rxjs';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
@@ -17,25 +20,43 @@ export class ProductsService {
     private readonly filesService: FilesService,
   ) {}
 
-  public async create({ images, ...params }: CreateProduct): Promise<Product> {
-    const newProduct = this.repository.create(params);
-
-    const savedProduct = await this.repository.save(newProduct);
-
-    const savedImages = await Promise.all(
-      images.map((img) => this.filesService.create(img)),
+  public async create(params: CreateProductDto): Promise<Product> {
+    const images = await Promise.all(
+      params.img_ids.map((img_id) => this.filesService.findOne(img_id)),
     );
 
-    // if (product.img_ids) {
-    //   imgIds.push(...product.img_ids);
-    // }
-    // imgIds.push(savedImg.id);
+    if (images.length) {
+      await Promise.all(
+        images.map((img) =>
+          this.filesService.update(img.id, { is_used: true }),
+        ),
+      );
+    }
 
-    await this.update(savedProduct.id, {
-      img_ids: savedImages.map((img) => img.id),
-    });
+    const newProduct = this.repository.create(params);
 
-    return savedProduct;
+    return this.repository.save(newProduct);
+  }
+
+  public async update(
+    id: number,
+    params: UpdateProductDto,
+  ): Promise<UpdateResult> {
+    const product = await this.findOne(id);
+
+    await Promise.all(
+      product.img_ids.map((img_id) =>
+        this.filesService.update(img_id, { is_used: false }),
+      ),
+    );
+
+    await Promise.all(
+      params.img_ids.map((img_id) =>
+        this.filesService.update(img_id, { is_used: true }),
+      ),
+    );
+
+    return this.repository.update({ id }, params);
   }
 
   public findAll(): Promise<Product[]> {
@@ -60,10 +81,6 @@ export class ProductsService {
 
   public findOne(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });
-  }
-
-  public update(id: number, params: UpdateProduct): Promise<UpdateResult> {
-    return this.repository.update({ id }, { ...params });
   }
 
   public async remove(id: number) {

@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,13 +23,19 @@ import { Product } from '@/api/products/entities/product.entity';
 import RoleGuard from '@/api/user/role.guard';
 import Role from '@/api/user/role.enum';
 import { ExpressMulterFile } from '@/api/types/file';
+import LocalFilesInterceptor from '@/api/files/interceptors/local-files.interceptor';
 
 import { ProductsService } from './products.service';
-import LocalFilesInterceptor from '@/api/files/interceptors/local-files.interceptor';
+import { FilesService } from '@/api/files/files.service';
+import LocalFile from '@/api/files/entities/local-file.entity';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    @Inject(FilesService)
+    private readonly filesService: FilesService,
+  ) {}
 
   @Post()
   @UseGuards(RoleGuard(Role.Admin))
@@ -39,16 +46,24 @@ export class ProductsController {
       path: '/products-images',
     }),
   )
-  create(
-    @Body() { count, price, ...rest }: CreateProductDto,
+  create(@Body() body: CreateProductDto) {
+    return this.productsService.create(body);
+  }
+
+  @Post('upload-images')
+  @UseGuards(RoleGuard(Role.Admin))
+  @UseInterceptors(
+    LocalFilesInterceptor({
+      fieldName: 'images',
+      maxCount: 9,
+      path: '/products-images',
+    }),
+  )
+  private async createSlideImg(
     @UploadedFiles() images: ExpressMulterFile[],
-  ) {
-    return this.productsService.create({
-      count: +count,
-      price: +price,
-      images,
-      ...rest,
-    });
+  ): Promise<LocalFile[]> {
+    console.log(images);
+    return Promise.all(images.map((img) => this.filesService.create(img)));
   }
 
   @Get()

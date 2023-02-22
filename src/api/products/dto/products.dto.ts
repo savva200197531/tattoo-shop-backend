@@ -5,11 +5,14 @@ export class CreateProductDto {
   @IsString()
   public readonly name: string;
 
-  @IsString()
-  public readonly price: string;
+  @IsNumber()
+  public readonly price: number;
 
-  @IsString()
-  public readonly count: string;
+  @IsNumber()
+  public readonly count: number;
+
+  @IsNumber({}, { each: true })
+  public readonly img_ids: number[];
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

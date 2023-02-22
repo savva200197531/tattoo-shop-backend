@@ -3,8 +3,6 @@ import { Repository, UpdateResult } from 'typeorm';
 import { Slide } from '@/api/slider/entities/slide.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from '@/api/files/files.service';
-import { ExpressMulterFile } from '@/api/types/file';
-import LocalFile from '@/api/files/entities/local-file.entity';
 import { CreateSlideDto, UpdateSlideDto } from '@/api/slider/dto/slider.dto';
 
 @Injectable()
@@ -18,7 +16,6 @@ export class SliderService {
 
   findAll() {
     return this.repository.find({
-      relations: ['img'],
       order: {
         id: 'DESC',
       },
@@ -43,10 +40,6 @@ export class SliderService {
     return this.repository.save(newSlide);
   }
 
-  createSlideImg(img: ExpressMulterFile): Promise<LocalFile> {
-    return this.filesService.create(img);
-  }
-
   async update(id: number, params: UpdateSlideDto): Promise<UpdateResult> {
     const slide = await this.findOne(id);
 
@@ -54,7 +47,7 @@ export class SliderService {
 
     await this.filesService.update(params.img_id, { is_used: true });
 
-    return this.repository.update({ id }, { ...params });
+    return this.repository.update({ id }, params);
   }
 
   public async remove(id: number) {

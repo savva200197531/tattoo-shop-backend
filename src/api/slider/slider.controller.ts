@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Patch,
@@ -17,10 +18,16 @@ import { ExpressMulterFile } from '@/api/types/file';
 import RoleGuard from '@/api/user/role.guard';
 import Role from '@/api/user/role.enum';
 import LocalFileInterceptor from '@/api/files/interceptors/local-file.interceptor';
+import { FilesService } from '@/api/files/files.service';
+import LocalFile from '@/api/files/entities/local-file.entity';
 
 @Controller('slider')
 export class SliderController {
-  constructor(private readonly sliderService: SliderService) {}
+  constructor(
+    private readonly sliderService: SliderService,
+    @Inject(FilesService)
+    private readonly filesService: FilesService,
+  ) {}
 
   @Get()
   private findAll() {
@@ -41,8 +48,10 @@ export class SliderController {
       path: '/slider-images',
     }),
   )
-  private createSlideImg(@UploadedFile() img: ExpressMulterFile) {
-    return this.sliderService.createSlideImg(img);
+  private createSlideImg(
+    @UploadedFile() img: ExpressMulterFile,
+  ): Promise<LocalFile> {
+    return this.filesService.create(img);
   }
 
   @Patch(':id')
