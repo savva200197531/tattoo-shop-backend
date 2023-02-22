@@ -1,15 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsHexColor, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateSlideDto {
   @IsString()
-  title: string;
+  link: string;
 
-  @IsString()
-  description: string;
-
-  @IsHexColor()
-  bg_color: string;
+  @IsNumber()
+  img_id: number;
 }
 
 export class UpdateSlideDto extends PartialType(CreateSlideDto) {}

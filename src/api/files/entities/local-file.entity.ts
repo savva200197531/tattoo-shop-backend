@@ -13,6 +13,9 @@ class LocalFile extends BaseEntity {
 
   @Column()
   mimetype: string;
+
+  @Column({ default: false })
+  is_used: boolean;
 }
 
 export default LocalFile;

@@ -23,11 +23,17 @@ export class SliderController {
   constructor(private readonly sliderService: SliderService) {}
 
   @Get()
-  findAll() {
+  private findAll() {
     return this.sliderService.findAll();
   }
 
   @Post()
+  @UseGuards(RoleGuard(Role.Admin))
+  private create(@Body() body: CreateSlideDto) {
+    return this.sliderService.create(body);
+  }
+
+  @Post('upload-img')
   @UseGuards(RoleGuard(Role.Admin))
   @UseInterceptors(
     LocalFileInterceptor({
@@ -35,12 +41,15 @@ export class SliderController {
       path: '/slider-images',
     }),
   )
-  create(@Body() body: CreateSlideDto, @UploadedFile() img: ExpressMulterFile) {
-    return this.sliderService.create({ img, ...body });
+  private createSlideImg(@UploadedFile() img: ExpressMulterFile) {
+    return this.sliderService.createSlideImg(img);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateSlideDto) {
+  private update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSlideDto,
+  ) {
     return this.sliderService.update(id, body);
   }
 

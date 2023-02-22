@@ -14,16 +14,12 @@ export class Slide extends BaseEntity {
   public id!: number;
 
   @Column()
-  public title: string;
-
-  @Column()
-  public description: string;
-
-  @Column()
-  public bg_color: string;
+  public link: string;
 
   @JoinColumn({ name: 'img_id' })
-  @OneToOne(() => LocalFile)
+  @OneToOne(() => LocalFile, {
+    onDelete: 'CASCADE',
+  })
   public img?: LocalFile;
 
   @Column('int', { nullable: true })

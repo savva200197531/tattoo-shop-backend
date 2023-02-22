@@ -55,7 +55,7 @@ export class ProductsController {
   @UseInterceptors(ClassSerializerInterceptor)
   findAll(@Query() query: GetProductsFilterDto): Promise<Product[]> {
     if (Object.keys(query).length) {
-      // return this.productsService.findProductsWithFilters(filterDto)
+      // return this.productsService.findProductsWithFilters(query);
     }
 
     return this.productsService.findAll();

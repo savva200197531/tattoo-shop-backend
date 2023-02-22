@@ -5,11 +5,15 @@ import {
   Res,
   ParseIntPipe,
   StreamableFile,
+  Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import RoleGuard from '@/api/user/role.guard';
+import Role from '@/api/user/role.enum';
 
 @Controller('files')
 export class FilesController {
@@ -30,5 +34,11 @@ export class FilesController {
     });
 
     return new StreamableFile(stream);
+  }
+
+  @Delete(':id')
+  @UseGuards(RoleGuard(Role.Admin))
+  private removeSlideImg(@Param('id', ParseIntPipe) id: number) {
+    return this.filesService.remove(id);
   }
 }

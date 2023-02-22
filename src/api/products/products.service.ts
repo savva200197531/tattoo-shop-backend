@@ -6,6 +6,8 @@ import { Product } from '@/api/products/entities/product.entity';
 import { GetProductsFilterDto } from '@/api/products/dto/products.dto';
 import { CreateProduct, UpdateProduct } from '@/api/products/types/product';
 import { FilesService } from '@/api/files/files.service';
+import { from } from 'rxjs';
+import { paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class ProductsService {
@@ -44,7 +46,17 @@ export class ProductsService {
     });
   }
 
-  public findProductsWithFilters(filterDto: GetProductsFilterDto) {}
+  public findProductsWithFilters(
+    params: GetProductsFilterDto & PaginateQuery,
+  ): Promise<Product[]> {
+    // return from(this.repository.findAndCount({
+    //   skip: params.page * params.limit || 0
+    //   take: params.limit || 10
+    //   order: { id: "ASC" },
+    //   select: []
+    // }));
+    return;
+  }
 
   public findOne(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });
