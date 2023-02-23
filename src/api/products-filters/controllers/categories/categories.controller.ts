@@ -24,7 +24,7 @@ import LocalFileInterceptor from '@/api/files/interceptors/local-file.intercepto
 import { ExpressMulterFile } from '@/api/types/file';
 import LocalFile from '@/api/files/entities/local-file.entity';
 import { FilesService } from '@/api/files/files.service';
-import { CategoriesService } from '@/api/products-filters/services/categories.service';
+import { CategoriesService } from '@/api/products-filters/services/categories/categories.service';
 
 @Controller('categories')
 export class CategoriesController {

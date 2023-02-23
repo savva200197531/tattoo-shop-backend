@@ -27,6 +27,9 @@ export class Product extends BaseEntity {
   @Column()
   public category_id!: number;
 
+  @Column()
+  public brand_id!: number;
+
   @OneToMany(() => Cart, (cart) => cart.product)
   public cart?: Cart[];
 

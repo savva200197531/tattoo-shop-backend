@@ -12,7 +12,8 @@ import { FilesService } from '@/api/files/files.service';
 import { from } from 'rxjs';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
 import { DeleteResult } from 'typeorm/browser';
-import { CategoriesService } from '@/api/products-filters/services/categories.service';
+import { CategoriesService } from '@/api/products-filters/services/categories/categories.service';
+import { BrandsService } from '@/api/products-filters/services/brands/brands.service';
 
 @Injectable()
 export class ProductsService {
@@ -22,13 +23,20 @@ export class ProductsService {
     private readonly filesService: FilesService,
     @Inject(FilesService)
     private readonly categoriesService: CategoriesService,
+    @Inject(BrandsService)
+    private readonly brandsService: BrandsService,
   ) {}
 
   public async create(params: CreateProductDto): Promise<Product> {
     const category = this.categoriesService.findOne(params.category_id);
+    const brand = this.brandsService.findOne(params.brand_id);
 
     if (!category) {
       throw new HttpException('Unknown category', HttpStatus.NOT_FOUND);
+    }
+
+    if (!brand) {
+      throw new HttpException('Unknown brand', HttpStatus.NOT_FOUND);
     }
 
     const images = await Promise.all(
