@@ -1,6 +1,6 @@
 import { Repository, UpdateResult } from 'typeorm';
 
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '@/api/products/entities/product.entity';
 import {
@@ -12,6 +12,7 @@ import { FilesService } from '@/api/files/files.service';
 import { from } from 'rxjs';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
 import { DeleteResult } from 'typeorm/browser';
+import { CategoriesService } from '@/api/products-filters/services/categories.service';
 
 @Injectable()
 export class ProductsService {
@@ -19,9 +20,17 @@ export class ProductsService {
     @InjectRepository(Product) private readonly repository: Repository<Product>,
     @Inject(FilesService)
     private readonly filesService: FilesService,
+    @Inject(FilesService)
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   public async create(params: CreateProductDto): Promise<Product> {
+    const category = this.categoriesService.findOne(params.category_id);
+
+    if (!category) {
+      throw new HttpException('Unknown category', HttpStatus.NOT_FOUND);
+    }
+
     const images = await Promise.all(
       params.img_ids.map((img_id) => this.filesService.findOne(img_id)),
     );

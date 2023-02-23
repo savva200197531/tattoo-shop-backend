@@ -1,8 +1,10 @@
-import {
-  CreateBaseFilterDto,
-  UpdateBaseFilterDto,
-} from '@/api/products-filters/dto/base-filter.dto';
+import { BaseFilterDto } from '@/api/products-filters/dto/base-filter.dto';
+import { IsNumber } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class CreateCategoryDto extends CreateBaseFilterDto {}
+export class CreateCategoryDto extends BaseFilterDto {
+  @IsNumber()
+  img_id: number;
+}
 
-export class UpdateCategoryDto extends UpdateBaseFilterDto {}
+export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}

@@ -11,6 +11,9 @@ export class CreateProductDto {
   @IsNumber()
   public readonly count: number;
 
+  @IsNumber()
+  public readonly category_id: number;
+
   @IsNumber({}, { each: true })
   public readonly img_ids: number[];
 }
