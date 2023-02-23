@@ -62,8 +62,16 @@ export class ProductsController {
   private async createSlideImg(
     @UploadedFiles() images: ExpressMulterFile[],
   ): Promise<LocalFile[]> {
-    console.log(images);
     return Promise.all(images.map((img) => this.filesService.create(img)));
+  }
+
+  @Patch(':id')
+  @UseGuards(RoleGuard(Role.Admin))
+  private update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateProductDto,
+  ) {
+    return this.productsService.update(id, body);
   }
 
   @Get()
@@ -79,19 +87,6 @@ export class ProductsController {
   @Get(':id')
   findProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
-  }
-
-  @Patch(':id')
-  @UseGuards(RoleGuard(Role.Admin))
-  private update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() { count, price, ...rest }: UpdateProductDto,
-  ) {
-    return this.productsService.update(id, {
-      count: +count,
-      price: +price,
-      ...rest,
-    });
   }
 
   @Delete(':id')

@@ -11,6 +11,7 @@ import {
 import { FilesService } from '@/api/files/files.service';
 import { from } from 'rxjs';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
+import { DeleteResult } from 'typeorm/browser';
 
 @Injectable()
 export class ProductsService {
@@ -83,7 +84,7 @@ export class ProductsService {
     return this.repository.findOneBy({ id });
   }
 
-  public async remove(id: number) {
+  public async remove(id: number): Promise<DeleteResult> {
     const product = await this.findOne(id);
 
     if (product.img_ids) {
