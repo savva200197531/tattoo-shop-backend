@@ -90,4 +90,9 @@ export class ProductsController {
   private remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
+
+  // @Get('price-range')
+  // findPriceRange() {
+  //   return this.productsService.findOne(id);
+  // }
 }

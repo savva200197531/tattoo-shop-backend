@@ -2,7 +2,7 @@ import { FilterOperator, PaginateConfig } from 'nestjs-paginate';
 import { Product } from '@/api/products/entities/product.entity';
 
 export const paginateConfig: PaginateConfig<Product> = {
-  sortableColumns: ['id', 'name'],
+  sortableColumns: ['id', 'price', 'created_at'],
   nullSort: 'last',
   defaultSortBy: [['id', 'DESC']],
   searchableColumns: ['name'],
@@ -12,5 +12,5 @@ export const paginateConfig: PaginateConfig<Product> = {
   relations: [],
   withDeleted: false,
   relativePath: true,
-  origin: 'http://cats.example',
+  origin: 'http://localhost:3000',
 };

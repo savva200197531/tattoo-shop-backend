@@ -30,6 +30,9 @@ export class Product extends BaseEntity {
   @Column()
   public brand_id!: number;
 
+  @Column({ type: 'timestamp' })
+  public created_at: Date;
+
   @OneToMany(() => Cart, (cart) => cart.product)
   public cart?: Cart[];
 

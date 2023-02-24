@@ -30,6 +30,7 @@ export class ProductsService {
     return paginate(query, this.repository, {
       ...paginateConfig,
       where: query.filter,
+      defaultSortBy: query.sortBy as any,
     });
   }
 
@@ -57,7 +58,10 @@ export class ProductsService {
       );
     }
 
-    const newProduct = this.repository.create(params);
+    const newProduct = this.repository.create({
+      ...params,
+      created_at: new Date(),
+    });
 
     return this.repository.save(newProduct);
   }
@@ -100,6 +104,10 @@ export class ProductsService {
   public findOne(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });
   }
+
+  // public findPriceRange(): Promise<{ max: number, min: number }> {
+  //   return this.repository.find( });
+  // }
 
   public async remove(id: number): Promise<DeleteResult> {
     const product = await this.findOne(id);
