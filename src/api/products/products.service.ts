@@ -1,19 +1,18 @@
 import { Repository, UpdateResult } from 'typeorm';
+import { PaginateQuery, paginate } from 'nestjs-paginate';
+import { DeleteResult } from 'typeorm/browser';
 
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '@/api/products/entities/product.entity';
 import {
   CreateProductDto,
-  GetProductsFilterDto,
   UpdateProductDto,
 } from '@/api/products/dto/products.dto';
 import { FilesService } from '@/api/files/files.service';
-import { from } from 'rxjs';
-import { paginate, PaginateQuery } from 'nestjs-paginate';
-import { DeleteResult } from 'typeorm/browser';
 import { CategoriesService } from '@/api/products-filters/services/categories/categories.service';
 import { BrandsService } from '@/api/products-filters/services/brands/brands.service';
+import { paginateConfig } from '@/api/products/paginate-config';
 
 @Injectable()
 export class ProductsService {
@@ -26,6 +25,13 @@ export class ProductsService {
     @Inject(BrandsService)
     private readonly brandsService: BrandsService,
   ) {}
+
+  async findAllWithPaginationAndFilters(query: PaginateQuery): Promise<any> {
+    return paginate(query, this.repository, {
+      ...paginateConfig,
+      where: query.filter,
+    });
+  }
 
   public async create(params: CreateProductDto): Promise<Product> {
     const category = this.categoriesService.findOne(params.category_id);
@@ -85,17 +91,11 @@ export class ProductsService {
     });
   }
 
-  public findProductsWithFilters(
-    params: GetProductsFilterDto & PaginateQuery,
-  ): Promise<Product[]> {
-    // return from(this.repository.findAndCount({
-    //   skip: params.page * params.limit || 0
-    //   take: params.limit || 10
-    //   order: { id: "ASC" },
-    //   select: []
-    // }));
-    return;
-  }
+  // public findProductsWithPagination(
+  //   options: IPaginationOptions,
+  // ): Promise<Pagination<Product>> {
+  //   return paginate<Product>(this.repository, options);
+  // }
 
   public findOne(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });

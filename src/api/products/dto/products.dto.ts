@@ -24,41 +24,45 @@ export class CreateProductDto {
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
 export class GetProductsFilterDto {
+  // @IsNumber()
+  // @IsOptional()
+  // price?: number;
+
   @IsNumber()
   @IsOptional()
-  price?: number;
+  category_id?: number;
 
-  @IsString()
-  @IsOptional()
-  brand?: string;
-
-  @IsString()
-  @IsOptional()
-  country?: string;
-
-  @IsString()
-  @IsOptional()
-  type?: string;
-
-  @IsString()
-  @IsOptional()
-  appointment?: string;
-
-  @IsString()
-  @IsOptional()
-  size?: string;
-
-  @IsString()
-  @IsOptional()
-  package?: string;
-
-  @IsString()
-  @IsOptional()
-  color?: string;
-
-  @IsString()
-  @IsOptional()
-  search?: string;
+  // @IsString()
+  // @IsOptional()
+  // brand?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // country?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // type?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // appointment?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // size?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // package?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // color?: string;
+  //
+  // @IsString()
+  // @IsOptional()
+  // search?: string;
 
   // @IsNumber()
   // @IsOptional()

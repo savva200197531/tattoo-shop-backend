@@ -1,3 +1,5 @@
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+
 import {
   Body,
   ClassSerializerInterceptor,
@@ -9,14 +11,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   CreateProductDto,
-  GetProductsFilterDto,
   UpdateProductDto,
 } from '@/api/products/dto/products.dto';
 import { Product } from '@/api/products/entities/product.entity';
@@ -24,10 +24,10 @@ import RoleGuard from '@/api/user/role.guard';
 import Role from '@/api/user/role.enum';
 import { ExpressMulterFile } from '@/api/types/file';
 import LocalFilesInterceptor from '@/api/files/interceptors/local-files.interceptor';
-
-import { ProductsService } from './products.service';
 import { FilesService } from '@/api/files/files.service';
 import LocalFile from '@/api/files/entities/local-file.entity';
+
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
@@ -76,12 +76,8 @@ export class ProductsController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  findAll(@Query() query: GetProductsFilterDto): Promise<Product[]> {
-    if (Object.keys(query).length) {
-      // return this.productsService.findProductsWithFilters(query);
-    }
-
-    return this.productsService.findAll();
+  findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>> {
+    return this.productsService.findAllWithPaginationAndFilters(query);
   }
 
   @Get(':id')
