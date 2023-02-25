@@ -1,4 +1,10 @@
-import { Repository, UpdateResult } from 'typeorm';
+import {
+  Between,
+  FindOptionsWhere,
+  ILike,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { PaginateQuery, paginate } from 'nestjs-paginate';
 import { DeleteResult } from 'typeorm/browser';
 
@@ -7,6 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '@/api/products/entities/product.entity';
 import {
   CreateProductDto,
+  GetPriceRangeFilterDto,
   UpdateProductDto,
 } from '@/api/products/dto/products.dto';
 import { FilesService } from '@/api/files/files.service';
@@ -27,10 +34,40 @@ export class ProductsService {
   ) {}
 
   async findAllWithPaginationAndFilters(query: PaginateQuery): Promise<any> {
+    const filter: FindOptionsWhere<Product> = {};
+
+    if (query.filter.category_id) {
+      filter.category_id = +query.filter.category_id;
+    }
+
+    if (query.filter.brand_id) {
+      filter.brand_id = +query.filter.brand_id;
+    }
+
+    if (query.filter.price_max && query.filter.price_min) {
+      filter.price = Between(+query.filter.price_min, +query.filter.price_max);
+    }
+
+    console.log(filter);
+
     return paginate(query, this.repository, {
       ...paginateConfig,
-      where: query.filter,
       defaultSortBy: query.sortBy as any,
+      where: filter,
+    });
+  }
+
+  async findAllWithPagination(query: PaginateQuery): Promise<any> {
+    return paginate(query, this.repository, {
+      ...paginateConfig,
+    });
+  }
+
+  public findAll(): Promise<Product[]> {
+    return this.repository.find({
+      order: {
+        id: 'DESC',
+      },
     });
   }
 
@@ -87,27 +124,34 @@ export class ProductsService {
     return this.repository.update({ id }, params);
   }
 
-  public findAll(): Promise<Product[]> {
-    return this.repository.find({
-      order: {
-        id: 'DESC',
-      },
-    });
-  }
-
-  // public findProductsWithPagination(
-  //   options: IPaginationOptions,
-  // ): Promise<Pagination<Product>> {
-  //   return paginate<Product>(this.repository, options);
-  // }
-
   public findOne(id: number): Promise<Product> {
     return this.repository.findOneBy({ id });
   }
 
-  // public findPriceRange(): Promise<{ max: number, min: number }> {
-  //   return this.repository.find( });
-  // }
+  public async findPriceRange(
+    query: GetPriceRangeFilterDto,
+  ): Promise<{ max: number; min: number }> {
+    const filter: FindOptionsWhere<Product> = {};
+
+    if (query.category_id) {
+      filter.category_id = +query.category_id;
+    }
+
+    const products = await this.repository.find({ where: filter });
+
+    const prices = products.map((product) => product.price);
+
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+    };
+  }
+
+  findAllWithSearch(search: string): Promise<Product[]> {
+    return this.repository.find({
+      where: { name: ILike(`%${search}%`) },
+    });
+  }
 
   public async remove(id: number): Promise<DeleteResult> {
     const product = await this.findOne(id);

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import RoleGuard from '@/api/user/role.guard';
@@ -14,6 +15,7 @@ import Role from '@/api/user/role.enum';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { BrandsService } from '@/api/products-filters/services/brands/brands.service';
 import {
+  BrandFiltersDto,
   CreateBrandDto,
   UpdateBrandDto,
 } from '@/api/products-filters/dto/brand.dto';
@@ -24,7 +26,10 @@ export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Get()
-  findAll(): Promise<Brand[]> {
+  findAll(@Query() query: BrandFiltersDto): Promise<Brand[]> {
+    if (Object.values(query).length) {
+      return this.brandsService.findAllWithFilters(+query.category_id);
+    }
     return this.brandsService.findAll();
   }
 

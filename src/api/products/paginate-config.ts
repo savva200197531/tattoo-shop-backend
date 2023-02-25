@@ -8,7 +8,11 @@ export const paginateConfig: PaginateConfig<Product> = {
   searchableColumns: ['name'],
   maxLimit: 10,
   defaultLimit: 10,
-  filterableColumns: { category_id: [FilterOperator.EQ, FilterOperator.IN] },
+  filterableColumns: {
+    category_id: [FilterOperator.EQ, FilterOperator.IN],
+    brand_id: [FilterOperator.EQ, FilterOperator.IN],
+    price: [FilterOperator.BTW],
+  },
   relations: [],
   withDeleted: false,
   relativePath: true,

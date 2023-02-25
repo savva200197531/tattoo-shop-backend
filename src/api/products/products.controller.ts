@@ -11,12 +11,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   CreateProductDto,
+  GetPriceRangeFilterDto,
   UpdateProductDto,
 } from '@/api/products/dto/products.dto';
 import { Product } from '@/api/products/entities/product.entity';
@@ -36,6 +38,28 @@ export class ProductsController {
     @Inject(FilesService)
     private readonly filesService: FilesService,
   ) {}
+
+  @Get('price-range')
+  findPriceRange(@Query() query: GetPriceRangeFilterDto) {
+    return this.productsService.findPriceRange(query);
+  }
+
+  @Get('search')
+  @UseInterceptors(ClassSerializerInterceptor)
+  findAllWithSearch(@Query('search') search: string): Promise<Product[]> {
+    if (search.length) {
+      return this.productsService.findAllWithSearch(search);
+    }
+  }
+
+  @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
+  findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>> {
+    if (query.filter) {
+      return this.productsService.findAllWithPaginationAndFilters(query);
+    }
+    return this.productsService.findAllWithPagination(query);
+  }
 
   @Post()
   @UseGuards(RoleGuard(Role.Admin))
@@ -74,12 +98,6 @@ export class ProductsController {
     return this.productsService.update(id, body);
   }
 
-  @Get()
-  @UseInterceptors(ClassSerializerInterceptor)
-  findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>> {
-    return this.productsService.findAllWithPaginationAndFilters(query);
-  }
-
   @Get(':id')
   findProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
@@ -90,9 +108,4 @@ export class ProductsController {
   private remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
-
-  // @Get('price-range')
-  // findPriceRange() {
-  //   return this.productsService.findOne(id);
-  // }
 }

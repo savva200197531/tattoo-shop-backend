@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { ArrayContains, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Brand } from '@/api/products-filters/entities/brand.entity';
 import {
   CreateBrandDto,
@@ -18,6 +18,17 @@ export class BrandsService {
     return this.repository.find({
       order: {
         id: 'DESC',
+      },
+    });
+  }
+
+  findAllWithFilters(category_id: number): Promise<Brand[]> {
+    return this.repository.find({
+      order: {
+        id: 'DESC',
+      },
+      where: {
+        category_ids: ArrayContains([category_id]),
       },
     });
   }
