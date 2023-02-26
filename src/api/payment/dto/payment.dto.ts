@@ -10,6 +10,9 @@ export class CreatePaymentDto {
   @IsString()
   readonly return_url: string;
 
+  @IsNumber()
+  readonly order_id: number;
+
   @IsString()
   @MaxLength(128)
   readonly description: string;
@@ -33,7 +36,9 @@ class ObjectPayment {
   test: boolean;
   paid: boolean;
   refundable: boolean;
-  metadata: object;
+  metadata: {
+    order_id: string;
+  };
   authorization_details: {
     rrn: string;
     auth_code: string;

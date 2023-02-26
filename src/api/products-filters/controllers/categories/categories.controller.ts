@@ -38,6 +38,11 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Category> {
+    return this.categoriesService.findOne(id);
+  }
+
   @Post()
   @UseGuards(RoleGuard(Role.Admin))
   create(@Body() body: CreateCategoryDto): Promise<Category> {

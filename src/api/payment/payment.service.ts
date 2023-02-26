@@ -10,7 +10,9 @@ import {
   YooCheckout,
 } from '@a2seven/yoo-checkout';
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { OrdersService } from '@/api/orders/orders.service';
+import { Payment } from '@a2seven/yoo-checkout/build/models';
 
 @Injectable()
 export class PaymentService {
@@ -19,9 +21,14 @@ export class PaymentService {
     secretKey: this.configService.get('PAYMENT_TOKEN'),
   });
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @Inject(ConfigService)
+    private configService: ConfigService,
+    @Inject(forwardRef(() => OrdersService))
+    private ordersService: OrdersService,
+  ) {}
 
-  async create(params: CreatePaymentDto) {
+  async create(params: CreatePaymentDto): Promise<Payment> {
     const idempotenceKey = uuidv4();
 
     const { price, return_url, description } = params;
@@ -30,6 +37,9 @@ export class PaymentService {
       amount: {
         value: price.toFixed(2),
         currency: 'RUB',
+      },
+      metadata: {
+        order_id: params.order_id,
       },
       payment_method_data: {
         type: 'bank_card',
@@ -46,6 +56,10 @@ export class PaymentService {
 
   async getPaymentStatus(params: GetPaymentStatusDto) {
     console.log(params);
+    await this.ordersService.update(+params.object.metadata.order_id, {
+      status: params.event,
+    });
+
     if (params.event !== 'payment.waiting_for_capture') return;
 
     const idempotenceKey = uuidv4();

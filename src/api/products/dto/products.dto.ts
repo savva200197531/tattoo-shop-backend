@@ -49,4 +49,8 @@ export class GetPriceRangeFilterDto {
   @IsString()
   @IsOptional()
   category_id?: string;
+
+  @IsString()
+  @IsOptional()
+  search?: string;
 }

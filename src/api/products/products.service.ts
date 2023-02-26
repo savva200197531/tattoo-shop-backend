@@ -48,7 +48,9 @@ export class ProductsService {
       filter.price = Between(+query.filter.price_min, +query.filter.price_max);
     }
 
-    console.log(filter);
+    if (query.filter.search) {
+      filter.name = ILike(`%${query.filter.search}%`);
+    }
 
     return paginate(query, this.repository, {
       ...paginateConfig,
@@ -135,6 +137,10 @@ export class ProductsService {
 
     if (query.category_id) {
       filter.category_id = +query.category_id;
+    }
+
+    if (query.search) {
+      filter.name = ILike(`%${query.search}%`);
     }
 
     const products = await this.repository.find({ where: filter });

@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,10 +25,17 @@ export class OrdersController {
     return this.ordersService.create(body);
   }
 
-  @Get(':user_id')
+  @Get()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  findAll(@Param('user_id', ParseIntPipe) user_id: number): Promise<Order[]> {
+  findAll(@Query('user_id', ParseIntPipe) user_id: number): Promise<Order[]> {
     return this.ordersService.findAll(user_id);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Order> {
+    return this.ordersService.findOne(id);
   }
 }

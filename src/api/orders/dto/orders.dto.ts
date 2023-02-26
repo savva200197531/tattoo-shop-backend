@@ -9,6 +9,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { IPaymentMethodType } from '@a2seven/yoo-checkout/build/types';
+import { IWebHookEvent } from '@a2seven/yoo-checkout/build/types/IWebHookEvent';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -36,7 +38,7 @@ export class CreateOrderDto {
   @IsEmail()
   public readonly email: string;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber('RU')
   public readonly phone: string;
 
   @IsString()
@@ -56,6 +58,15 @@ export class CreateOrderDto {
   @MaxLength(128)
   public readonly comment?: string;
 
+  @IsOptional()
+  @IsString()
+  public readonly status?: IWebHookEvent;
+
+  @IsString()
+  readonly return_url: string;
+
   @IsString()
   public readonly payment_method: IPaymentMethodType;
 }
+
+export class UpdateOrderDto extends PartialType(CreateOrderDto) {}
