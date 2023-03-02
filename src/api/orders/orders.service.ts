@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
 } from '@nestjs/common';
@@ -28,9 +30,18 @@ export class OrdersService {
     private paymentService: PaymentService,
   ) {}
 
-  public findAll(user_id: number): Promise<Order[]> {
+  public findAllWithFilter(user_id: number): Promise<Order[]> {
     return this.orderRepository.find({
       where: { user: { id: user_id } },
+      order: {
+        id: 'DESC',
+      },
+      relations: ['products', 'user'],
+    });
+  }
+
+  public findAll(): Promise<Order[]> {
+    return this.orderRepository.find({
       order: {
         id: 'DESC',
       },
@@ -43,6 +54,25 @@ export class OrdersService {
       where: { id },
       relations: ['products', 'user'],
     });
+  }
+
+  async findOneWithFilter(id: number, user_id: number): Promise<Order> {
+    const user = await this.userService.findUser(user_id);
+
+    if (user.role === 'Admin') {
+      return this.findOne(id);
+    }
+
+    const order = await this.orderRepository.findOne({
+      where: { id, user: { id: user_id } },
+      relations: ['products', 'user'],
+    });
+
+    if (!order) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
+    return order;
   }
 
   update(id: number, params: UpdateOrderDto): Promise<UpdateResult> {
@@ -84,7 +114,7 @@ export class OrdersService {
       user,
       products,
       date: new Date(),
-      status: 'Ожидает оплаты',
+      status: 'payment.waiting_for_capture',
     });
 
     const order = await this.orderRepository.save(newOrder);

@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { OrdersService } from '@/api/orders/orders.service';
 import { Payment } from '@a2seven/yoo-checkout/build/models';
+import { EmailService } from '@/api/email/email.service';
 
 @Injectable()
 export class PaymentService {
@@ -24,6 +25,8 @@ export class PaymentService {
   constructor(
     @Inject(ConfigService)
     private configService: ConfigService,
+    @Inject(EmailService)
+    private emailService: EmailService,
     @Inject(forwardRef(() => OrdersService))
     private ordersService: OrdersService,
   ) {}
@@ -55,12 +58,15 @@ export class PaymentService {
   }
 
   async getPaymentStatus(params: GetPaymentStatusDto) {
-    console.log(params);
-    await this.ordersService.update(+params.object.metadata.order_id, {
+    const order_id = +params.object.metadata.order_id;
+
+    await this.ordersService.update(order_id, {
       status: params.event,
     });
 
     if (params.event !== 'payment.waiting_for_capture') return;
+
+    const order = await this.ordersService.findOne(order_id);
 
     const idempotenceKey = uuidv4();
 
@@ -74,7 +80,21 @@ export class PaymentService {
       idempotenceKey,
     );
 
-    console.log(payment);
+    if (payment.status === 'succeeded') {
+      return this.emailService.sendMail({
+        to: this.configService.get('EMAIL_USER'),
+        subject: `Заказ №${order_id}, от ${order.date}`,
+        text: `
+        Регион: ${order.region},
+        Город: ${order.city},
+        Адрес: ${order.address},
+        Телефон: ${order.phone},
+        Почта: ${order.email},
+        Оплачено: ${order.price},
+        Продукты: ${order.products.map((product) => product.name).join(', ')}
+        `,
+      });
+    }
 
     return payment;
   }

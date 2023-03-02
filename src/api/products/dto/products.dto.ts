@@ -5,6 +5,10 @@ export class CreateProductDto {
   @IsString()
   public readonly name: string;
 
+  @IsOptional()
+  @IsString()
+  public readonly description: string;
+
   @IsNumber()
   public readonly price: number;
 

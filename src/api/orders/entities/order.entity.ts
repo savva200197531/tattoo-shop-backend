@@ -11,6 +11,7 @@ import {
 import { User } from '@/api/user/entities/user.entity';
 import { IPaymentMethodType } from '@a2seven/yoo-checkout/build/types';
 import { OrderProduct } from '@/api/orders/entities/order-product.entity';
+import { IWebHookEvent } from '@a2seven/yoo-checkout/build/types/IWebHookEvent';
 
 @Entity()
 export class Order extends BaseEntity {
@@ -51,7 +52,7 @@ export class Order extends BaseEntity {
   public comment: string;
 
   @Column()
-  public status: string;
+  public status: IWebHookEvent;
 
   @Column({ type: 'timestamp' })
   public date: Date;

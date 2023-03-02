@@ -30,6 +30,9 @@ export class Product extends BaseEntity {
   @Column()
   public brand_id!: number;
 
+  @Column({ nullable: true, default: null })
+  public description?: string;
+
   @Column({ type: 'timestamp' })
   public created_at: Date;
 

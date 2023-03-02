@@ -14,6 +14,8 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from '@/api/orders/dto/orders.dto';
 import { JwtAuthGuard } from '@/api/auth/auth.guard';
 import { Order } from '@/api/orders/entities/order.entity';
+import RoleGuard from '@/api/user/role.guard';
+import Role from '@/api/user/role.enum';
 
 @Controller('orders')
 export class OrdersController {
@@ -28,14 +30,26 @@ export class OrdersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  findAll(@Query('user_id', ParseIntPipe) user_id: number): Promise<Order[]> {
-    return this.ordersService.findAll(user_id);
+  findAllWithFilter(
+    @Query('user_id', ParseIntPipe) user_id: number,
+  ): Promise<Order[]> {
+    return this.ordersService.findAllWithFilter(user_id);
+  }
+
+  @Get('all')
+  @UseGuards(RoleGuard(Role.Admin))
+  @UseInterceptors(ClassSerializerInterceptor)
+  findAll(): Promise<Order[]> {
+    return this.ordersService.findAll();
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Order> {
-    return this.ordersService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('user_id', ParseIntPipe) user_id: number,
+  ): Promise<Order> {
+    return this.ordersService.findOneWithFilter(id, user_id);
   }
 }
