@@ -38,7 +38,7 @@ export class CreateOrderDto {
   @IsEmail()
   public readonly email: string;
 
-  @IsPhoneNumber('RU')
+  @IsPhoneNumber('RU', { message: 'Телефон указан не верно' })
   public readonly phone: string;
 
   @IsString()
