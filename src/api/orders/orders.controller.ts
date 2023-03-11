@@ -22,8 +22,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  create(@Body() body: CreateOrderDto) {
+  create(@Body() body: CreateOrderDto): Promise<Order> {
     return this.ordersService.create(body);
   }
 

@@ -36,6 +36,8 @@ export class PaymentService {
 
     const { price, return_url, description } = params;
 
+    const order = await this.ordersService.findOne(params.order_id);
+
     const createPayload: ICreatePayment = {
       amount: {
         value: price.toFixed(2),
@@ -46,6 +48,23 @@ export class PaymentService {
       },
       payment_method_data: {
         type: 'bank_card',
+      },
+      receipt: {
+        customer: {
+          full_name: `${order.surname} ${order.name} ${order.lastname}`,
+          phone: order.phone,
+        },
+        items: order.products.map((product) => ({
+          description: product.name,
+          quantity: product.count.toString(),
+          amount: {
+            value: product.price.toFixed(2),
+            currency: 'RUB',
+          },
+          vat_code: 2,
+          payment_mode: 'full_prepayment',
+          payment_subject: 'commodity',
+        })),
       },
       confirmation: {
         type: 'redirect',
@@ -58,11 +77,12 @@ export class PaymentService {
   }
 
   async getPaymentStatus(params: GetPaymentStatusDto) {
+    console.log(params);
     const order_id = +params.object.metadata.order_id;
 
-    await this.ordersService.update(order_id, {
-      status: params.event,
-    });
+    // await this.ordersService.update(order_id, {
+    //   status: params.event,
+    // });
 
     if (params.event !== 'payment.waiting_for_capture') return;
 
@@ -81,8 +101,22 @@ export class PaymentService {
     );
 
     if (payment.status === 'succeeded') {
-      return this.emailService.sendMail({
+      await this.emailService.sendMail({
         to: this.configService.get('EMAIL_USER'),
+        subject: `Заказ №${order_id}, от ${order.date}`,
+        text: `
+        Регион: ${order.region},
+        Город: ${order.city},
+        Адрес: ${order.address},
+        Телефон: ${order.phone},
+        Почта: ${order.email},
+        Оплачено: ${order.price},
+        Продукты: ${order.products.map((product) => product.name).join(', ')}
+        `,
+      });
+
+      await this.emailService.sendMail({
+        to: order.email,
         subject: `Заказ №${order_id}, от ${order.date}`,
         text: `
         Регион: ${order.region},

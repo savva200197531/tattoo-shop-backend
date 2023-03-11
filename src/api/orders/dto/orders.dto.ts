@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEmail,
   IsNumber,
   IsOptional,
@@ -8,9 +9,10 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { IPaymentMethodType } from '@a2seven/yoo-checkout/build/types';
-import { IWebHookEvent } from '@a2seven/yoo-checkout/build/types/IWebHookEvent';
 import { PartialType } from '@nestjs/mapped-types';
+import { OrderStatus } from '@/api/orders/types/orderStatus';
+import { Type } from 'class-transformer';
+import { Cart } from '@/api/cart/entities/cart.entity';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -18,7 +20,8 @@ export class CreateOrderDto {
   public readonly price: number;
 
   @IsNumber()
-  public readonly user_id: number;
+  @IsOptional()
+  public readonly user_id?: number;
 
   @IsString()
   @MinLength(2)
@@ -59,14 +62,13 @@ export class CreateOrderDto {
   public readonly comment?: string;
 
   @IsOptional()
-  @IsString()
-  public readonly status?: IWebHookEvent;
+  @IsNumber()
+  public readonly status?: OrderStatus;
 
-  @IsString()
-  readonly return_url: string;
-
-  @IsString()
-  public readonly payment_method: IPaymentMethodType;
+  @IsArray()
+  // @ValidateNested({ each: true })
+  @Type(() => Cart)
+  cart: Cart[];
 }
 
 export class UpdateOrderDto extends PartialType(CreateOrderDto) {}

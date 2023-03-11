@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { EmailConfirmationModule } from "@/api/email-confirmation/email-confirmation.module";
-import { AuthModule } from "@/api/auth/auth.module";
+import { EmailConfirmationModule } from '@/api/email-confirmation/email-confirmation.module';
+import { AuthModule } from '@/api/auth/auth.module';
 
 import { UserModule } from './user/user.module';
 import { ProductsModule } from './products/products.module';
@@ -9,7 +9,6 @@ import { CartModule } from './cart/cart.module';
 import { EmailModule } from './email/email.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { FilesModule } from './files/files.module';
-import { PaymentModule } from './payment/payment.module';
 import { SliderModule } from './slider/slider.module';
 import { ProductsFiltersModule } from './products-filters/products-filters.module';
 
@@ -24,9 +23,8 @@ import { ProductsFiltersModule } from './products-filters/products-filters.modul
     UserModule,
     FavoriteModule,
     FilesModule,
-    PaymentModule,
     SliderModule,
-    ProductsFiltersModule
+    ProductsFiltersModule,
   ],
 })
 export class ApiModule {}

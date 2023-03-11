@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateOrderDto, UpdateOrderDto } from '@/api/orders/dto/orders.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
@@ -14,8 +7,10 @@ import { UserService } from '@/api/user/user.service';
 import { CartService } from '@/api/cart/cart.service';
 import { OrderProduct } from '@/api/orders/entities/order-product.entity';
 import { CreateOrderProduct } from '@/api/orders/types/order-product';
-import { PaymentService } from '@/api/payment/payment.service';
-import { Payment } from '@a2seven/yoo-checkout/build/models';
+import { EmailService } from '@/api/email/email.service';
+import { ConfigService } from '@nestjs/config';
+import Mail from 'nodemailer/lib/mailer';
+import { ProductsService } from '@/api/products/products.service';
 
 @Injectable()
 export class OrdersService {
@@ -26,8 +21,9 @@ export class OrdersService {
     private readonly orderProductRepository: Repository<OrderProduct>,
     @Inject(UserService) private readonly userService: UserService,
     @Inject(CartService) private readonly cartService: CartService,
-    @Inject(forwardRef(() => PaymentService))
-    private paymentService: PaymentService,
+    @Inject(EmailService) private emailService: EmailService,
+    @Inject(ConfigService) private configService: ConfigService,
+    @Inject(ProductsService) private productsService: ProductsService,
   ) {}
 
   public findAllWithFilter(user_id: number): Promise<Order[]> {
@@ -85,23 +81,15 @@ export class OrdersService {
     return this.orderProductRepository.save(newProduct);
   }
 
-  async create({
-    return_url,
-    ...params
-  }: CreateOrderDto): Promise<{ order: Order; payment: Payment }> {
-    const user = await this.userService.findUser(params.user_id);
-    const cart = await this.cartService.findAll(params.user_id);
+  async create(params: CreateOrderDto): Promise<Order> {
+    const user = params.user_id
+      ? await this.userService.findUser(params.user_id)
+      : null;
 
-    if (!user) {
-      throw new BadRequestException('user not found');
-    }
-
-    if (!cart) {
-      throw new BadRequestException('cart is empty');
-    }
+    console.log(params.cart);
 
     const products = await Promise.all(
-      cart.items.map((item) =>
+      params.cart.map((item) =>
         this.createOrderProduct({
           ...item.product,
           count: item.count,
@@ -109,32 +97,61 @@ export class OrdersService {
       ),
     );
 
+    console.log(products);
+
     const newOrder = this.orderRepository.create({
       ...params,
       user,
       products,
       date: new Date(),
-      status: 'payment.waiting_for_capture',
     });
 
     const order = await this.orderRepository.save(newOrder);
 
     if (order) {
       await Promise.all(
-        cart.items.map((cartItem) => this.cartService.remove(cartItem.id)),
+        params.cart.map((cartItem) =>
+          this.productsService.decrementProductCount(
+            cartItem.product.id,
+            cartItem.count,
+          ),
+        ),
       );
+
+      await this.sendOrderToEmail(order);
+
+      if (params.user_id) {
+        await Promise.all(
+          params.cart.map((cartItem) => this.cartService.remove(cartItem.id)),
+        );
+      }
     }
 
-    const payment = await this.paymentService.create({
-      order_id: order.id,
-      description: order.comment,
-      price: order.price,
-      return_url,
+    return order;
+  }
+
+  async sendOrderToEmail(order: Order) {
+    const options: Mail.Options = {
+      subject: `Заказ №${order.id}, от ${order.date}`,
+      text: `
+        Регион: ${order.region},
+        Город: ${order.city},
+        Адрес: ${order.address},
+        Телефон: ${order.phone},
+        Почта: ${order.email},
+        Оплачено: ${order.price},
+        Продукты: ${order.products.map((product) => product.name).join(', ')}
+        `,
+    };
+
+    await this.emailService.sendMail({
+      to: this.configService.get('EMAIL_USER'),
+      ...options,
     });
 
-    return {
-      order,
-      payment,
-    };
+    await this.emailService.sendMail({
+      to: order.email,
+      ...options,
+    });
   }
 }

@@ -111,19 +111,30 @@ export class ProductsService {
   ): Promise<UpdateResult> {
     const product = await this.findOne(id);
 
-    await Promise.all(
-      product.img_ids.map((img_id) =>
-        this.filesService.update(img_id, { is_used: false }),
-      ),
-    );
+    if (params.img_ids) {
+      await Promise.all(
+        product.img_ids.map((img_id) =>
+          this.filesService.update(img_id, { is_used: false }),
+        ),
+      );
 
-    await Promise.all(
-      params.img_ids.map((img_id) =>
-        this.filesService.update(img_id, { is_used: true }),
-      ),
-    );
+      await Promise.all(
+        params.img_ids.map((img_id) =>
+          this.filesService.update(img_id, { is_used: true }),
+        ),
+      );
+    }
 
     return this.repository.update({ id }, params);
+  }
+
+  public async decrementProductCount(
+    id: number,
+    count: number,
+  ): Promise<UpdateResult> {
+    const product = await this.findOne(id);
+
+    return this.update(id, { count: product.count - count });
   }
 
   public findOne(id: number): Promise<Product> {

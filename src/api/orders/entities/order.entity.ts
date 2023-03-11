@@ -9,9 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '@/api/user/entities/user.entity';
-import { IPaymentMethodType } from '@a2seven/yoo-checkout/build/types';
 import { OrderProduct } from '@/api/orders/entities/order-product.entity';
-import { IWebHookEvent } from '@a2seven/yoo-checkout/build/types/IWebHookEvent';
+import { OrderStatus } from '@/api/orders/types/orderStatus';
 
 @Entity()
 export class Order extends BaseEntity {
@@ -23,9 +22,6 @@ export class Order extends BaseEntity {
 
   @Column()
   public phone: string;
-
-  @Column()
-  public payment_method: IPaymentMethodType;
 
   @Column()
   public address: string;
@@ -52,7 +48,7 @@ export class Order extends BaseEntity {
   public comment: string;
 
   @Column()
-  public status: IWebHookEvent;
+  public status: OrderStatus;
 
   @Column({ type: 'timestamp' })
   public date: Date;
@@ -60,9 +56,10 @@ export class Order extends BaseEntity {
   @ManyToOne(() => User, (user) => user.orders, {
     orphanedRowAction: 'delete',
     onDelete: 'CASCADE',
+    nullable: true,
   })
   @JoinColumn()
-  public user: User;
+  public user?: User;
 
   @ManyToMany(() => OrderProduct)
   @JoinTable()
