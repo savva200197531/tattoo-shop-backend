@@ -44,7 +44,7 @@ export class Order extends BaseEntity {
   @Column()
   public city: string;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   public comment: string;
 
   @Column()

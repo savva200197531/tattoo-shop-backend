@@ -86,8 +86,6 @@ export class OrdersService {
       ? await this.userService.findUser(params.user_id)
       : null;
 
-    console.log(params.cart);
-
     const products = await Promise.all(
       params.cart.map((item) =>
         this.createOrderProduct({
@@ -96,8 +94,6 @@ export class OrdersService {
         }),
       ),
     );
-
-    console.log(products);
 
     const newOrder = this.orderRepository.create({
       ...params,
