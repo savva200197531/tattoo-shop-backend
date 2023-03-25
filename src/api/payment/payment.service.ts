@@ -101,33 +101,33 @@ export class PaymentService {
     );
 
     if (payment.status === 'succeeded') {
-      await this.emailService.sendMail({
-        to: this.configService.get('EMAIL_USER'),
-        subject: `Заказ №${order_id}, от ${order.date}`,
-        text: `
-        Регион: ${order.region},
-        Город: ${order.city},
-        Адрес: ${order.address},
-        Телефон: ${order.phone},
-        Почта: ${order.email},
-        Оплачено: ${order.price},
-        Продукты: ${order.products.map((product) => product.name).join(', ')}
-        `,
-      });
-
-      await this.emailService.sendMail({
-        to: order.email,
-        subject: `Заказ №${order_id}, от ${order.date}`,
-        text: `
-        Регион: ${order.region},
-        Город: ${order.city},
-        Адрес: ${order.address},
-        Телефон: ${order.phone},
-        Почта: ${order.email},
-        Оплачено: ${order.price},
-        Продукты: ${order.products.map((product) => product.name).join(', ')}
-        `,
-      });
+      // await this.emailService.sendMail({
+      //   to: this.configService.get('EMAIL_USER'),
+      //   subject: `Заказ №${order_id}, от ${order.date}`,
+      //   text: `
+      //   Регион: ${order.region},
+      //   Город: ${order.city},
+      //   Адрес: ${order.address},
+      //   Телефон: ${order.phone},
+      //   Почта: ${order.email},
+      //   Оплачено: ${order.price},
+      //   Продукты: ${order.products.map((product) => product.name).join(', ')}
+      //   `,
+      // });
+      //
+      // await this.emailService.sendMail({
+      //   to: order.email,
+      //   subject: `Заказ №${order_id}, от ${order.date}`,
+      //   text: `
+      //   Регион: ${order.region},
+      //   Город: ${order.city},
+      //   Адрес: ${order.address},
+      //   Телефон: ${order.phone},
+      //   Почта: ${order.email},
+      //   Оплачено: ${order.price},
+      //   Продукты: ${order.products.map((product) => product.name).join(', ')}
+      //   `,
+      // });
     }
 
     return payment;

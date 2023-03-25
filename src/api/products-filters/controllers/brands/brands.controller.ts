@@ -33,6 +33,11 @@ export class BrandsController {
     return this.brandsService.findAll();
   }
 
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Brand> {
+    return this.brandsService.findOne(id);
+  }
+
   @Post()
   @UseGuards(RoleGuard(Role.Admin))
   create(@Body() body: CreateBrandDto): Promise<Brand> {

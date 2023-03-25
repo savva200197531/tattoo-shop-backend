@@ -2,6 +2,7 @@ import {
   Between,
   FindOptionsWhere,
   ILike,
+  In,
   Repository,
   UpdateResult,
 } from 'typeorm';
@@ -50,6 +51,14 @@ export class ProductsService {
 
     if (query.filter.search) {
       filter.name = ILike(`%${query.filter.search}%`);
+    }
+
+    if (query.filter.color) {
+      filter.color_id = In(query.filter.color as any);
+    }
+
+    if (query.filter.amount) {
+      filter.amount_id = In(query.filter.amount as any);
     }
 
     return paginate(query, this.repository, {

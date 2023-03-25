@@ -15,9 +15,7 @@ import { Type } from 'class-transformer';
 import { Cart } from '@/api/cart/entities/cart.entity';
 
 export class CreateOrderDto {
-  @IsNumber()
-  @Min(1)
-  public readonly price: number;
+  // user
 
   @IsNumber()
   @IsOptional()
@@ -44,22 +42,33 @@ export class CreateOrderDto {
   @IsPhoneNumber('RU', { message: 'Телефон указан не верно' })
   public readonly phone: string;
 
+  // address
+
   @IsString()
-  @MaxLength(32)
   public readonly region: string;
 
   @IsString()
-  @MaxLength(32)
   public readonly city: string;
 
   @IsString()
-  @MaxLength(32)
-  public readonly address: string;
+  public readonly street: string;
+
+  @IsString()
+  public readonly house: string;
+
+  @IsString()
+  public readonly apartment: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(128)
   public readonly comment?: string;
+
+  // rest
+
+  @IsNumber()
+  @Min(1)
+  public readonly price: number;
 
   @IsOptional()
   @IsNumber()

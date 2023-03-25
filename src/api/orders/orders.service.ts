@@ -132,11 +132,16 @@ export class OrdersService {
       text: `
         Регион: ${order.region},
         Город: ${order.city},
-        Адрес: ${order.address},
+        Адрес: ${order.street} ${order.house} ${order.apartment},
         Телефон: ${order.phone},
         Почта: ${order.email},
         Оплачено: ${order.price},
-        Продукты: ${order.products.map((product) => product.name).join(', ')}
+        Продукты: ${order.products
+          .map(
+            (product) =>
+              `${this.configService.get('MAIN_URL')}/products/${product.id}`,
+          )
+          .join(', ')}
         `,
     };
 

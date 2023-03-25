@@ -18,6 +18,18 @@ export class CreateProductDto {
   @IsNumber()
   public readonly category_id: number;
 
+  @IsOptional()
+  @IsNumber()
+  public readonly color_id: number;
+
+  @IsOptional()
+  @IsNumber()
+  public readonly amount_id: number;
+
+  @IsOptional()
+  @IsNumber()
+  public readonly quantity_id: number;
+
   @IsNumber()
   public readonly brand_id: number;
 

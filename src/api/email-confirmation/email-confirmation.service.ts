@@ -23,7 +23,7 @@ export class EmailConfirmationService {
       )}s`,
     });
 
-    const url = `${this.configService.get('EMAIL_CONFIRMATION_URL')}/${token}`;
+    const url = `${this.configService.get('MAIN_URL')}/confirmation/${token}`;
 
     const text = `Приятных вам покупок! Для подтверждения почты перейдите по ссылке: ${url}.`;
 

@@ -6,8 +6,8 @@ export const paginateConfig: PaginateConfig<Product> = {
   nullSort: 'last',
   defaultSortBy: [['id', 'DESC']],
   searchableColumns: ['name'],
-  maxLimit: 10,
-  defaultLimit: 10,
+  maxLimit: 15,
+  defaultLimit: 15,
   filterableColumns: {
     category_id: [FilterOperator.EQ, FilterOperator.IN],
     brand_id: [FilterOperator.EQ, FilterOperator.IN],

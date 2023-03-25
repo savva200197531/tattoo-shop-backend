@@ -27,6 +27,15 @@ export class Product extends BaseEntity {
   @Column()
   public category_id!: number;
 
+  @Column({ nullable: true, default: null })
+  public color_id?: number;
+
+  @Column({ nullable: true, default: null })
+  public amount_id?: number;
+
+  @Column({ nullable: true, default: null })
+  public quantity_id?: number;
+
   @Column()
   public brand_id!: number;
 

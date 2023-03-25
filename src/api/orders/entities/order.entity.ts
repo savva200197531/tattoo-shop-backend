@@ -17,14 +17,10 @@ export class Order extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id!: number;
 
-  @Column()
-  public price: number;
+  // user
 
   @Column()
   public phone: string;
-
-  @Column()
-  public address: string;
 
   @Column()
   public surname: string;
@@ -38,14 +34,30 @@ export class Order extends BaseEntity {
   @Column()
   public email: string;
 
+  // address
+
   @Column()
   public region: string;
 
   @Column()
   public city: string;
 
+  @Column()
+  public street: string;
+
+  @Column()
+  public house: string;
+
+  @Column()
+  public apartment: string;
+
   @Column({ nullable: true, default: null })
   public comment: string;
+
+  // rest
+
+  @Column()
+  public price: number;
 
   @Column()
   public status: OrderStatus;
