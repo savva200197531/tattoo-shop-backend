@@ -18,7 +18,6 @@ import {
   UpdateCategoryDto,
 } from '@/api/products-filters/dto/category.dto';
 import { Category } from '@/api/products-filters/entities/category.entity';
-import { UpdateResult } from 'typeorm';
 import { DeleteResult } from 'typeorm/browser';
 import LocalFileInterceptor from '@/api/files/interceptors/local-file.interceptor';
 import { ExpressMulterFile } from '@/api/types/file';
@@ -68,7 +67,7 @@ export class CategoriesController {
   private update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
+  ): Promise<Category> {
     return this.categoriesService.update(id, body);
   }
 

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Category } from '@/api/products-filters/entities/category.entity';
 import {
   CreateCategoryDto,
@@ -44,14 +44,16 @@ export class CategoriesService {
     return this.repository.save(newCategory);
   }
 
-  async update(id: number, params: UpdateCategoryDto): Promise<UpdateResult> {
+  async update(id: number, params: UpdateCategoryDto): Promise<Category> {
     const category = await this.findOne(id);
 
     await this.filesService.update(category.img_id, { is_used: false });
 
     await this.filesService.update(params.img_id, { is_used: true });
 
-    return this.repository.update({ id }, params);
+    await this.repository.update({ id }, params);
+
+    return this.findOne(id);
   }
 
   public async remove(id: number): Promise<DeleteResult> {
