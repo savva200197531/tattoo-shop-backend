@@ -38,7 +38,7 @@ export class FavoriteController {
   addToFavorite(
     @Param('user_id', ParseIntPipe) user_id: number,
     @Body() body: AddToFavoriteDto,
-  ): Promise<Favorite> {
+  ): Promise<Favorite[]> {
     return this.favoriteService.addToFavorite(user_id, body);
   }
 

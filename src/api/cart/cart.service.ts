@@ -1,4 +1,4 @@
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   BadRequestException,
@@ -22,6 +22,14 @@ export class CartService {
     @Inject(UserService) private readonly userService: UserService,
   ) {}
 
+  formatCartRes(items: Cart[]) {
+    return {
+      items,
+      totalPrice: items.reduce((p, c) => p + c.price, 0),
+      totalProductsCount: items.reduce((p, c) => p + c.count, 0),
+    };
+  }
+
   public async findAll(user_id: number): Promise<CartResponse> {
     const items = await this.cartRepository.find({
       where: { user: { id: user_id } },
@@ -31,17 +39,16 @@ export class CartService {
       },
     });
 
-    return {
-      items: items,
-      totalPrice: items.reduce((p, c) => p + c.price, 0),
-      totalProductsCount: items.reduce((p, c) => p + c.count, 0),
-    };
+    return this.formatCartRes(items);
   }
 
-  // public findOne(id: number): Promise<Cart> {
-  //   return this.cartRepository.findOne({ where: { id }, relations: ["user", "product"] })
-  // }
-  //
+  public findOne(id: number): Promise<Cart> {
+    return this.cartRepository.findOne({
+      where: { id },
+      relations: ['user', 'product'],
+    });
+  }
+
   // findOneByUser(id: number, user_id: number): Promise<Cart> {
   //   return this.cartRepository.findOne({ where: { id, user: { id: user_id } }, relations: ["user", "product"] })
   // }
@@ -60,7 +67,7 @@ export class CartService {
   public async addToCart(
     user_id: number,
     param: AddToCartDto,
-  ): Promise<object | Cart | UpdateResult> {
+  ): Promise<object | Cart> {
     const { product_id, count } = param;
     const user = await this.userService.findUser(user_id);
     const product = await this.productsService.findOne(product_id);
@@ -85,17 +92,19 @@ export class CartService {
       if (count === 0) {
         await this.remove(duplicatedCartItem.id);
 
-        return { action: 'delete' };
+        return this.findAll(user_id);
       }
 
       if (count === duplicatedCartItem.count) {
-        throw new UnauthorizedException('product count doesnt change');
+        throw new UnauthorizedException('Количество продуктов не изменилось');
       }
 
-      return this.cartRepository.update(
+      await this.cartRepository.update(
         { id: duplicatedCartItem.id },
         { count, price: product.price * count },
       );
+
+      return this.findAll(user_id);
     } else {
       const newCartItem = this.cartRepository.create({
         count,
@@ -104,7 +113,9 @@ export class CartService {
         user,
       });
 
-      return this.cartRepository.save(newCartItem);
+      await this.cartRepository.save(newCartItem);
+
+      return this.findAll(user_id);
     }
   }
 

@@ -43,7 +43,7 @@ export class FavoriteService {
   public async addToFavorite(
     user_id: number,
     param: AddToFavoriteDto,
-  ): Promise<Favorite> {
+  ): Promise<Favorite[]> {
     const { product_id } = param;
 
     const product = await this.productsService.findOne(product_id);
@@ -62,15 +62,19 @@ export class FavoriteService {
     }
 
     if (duplicatedFavoriteProduct) {
-      throw new BadRequestException('product is already in favorite');
+      await this.remove(duplicatedFavoriteProduct.id);
+
+      return this.findAll(user_id);
+    } else {
+      const newFavorite = this.favoriteRepository.create({
+        product,
+        user,
+      });
+
+      await this.favoriteRepository.save(newFavorite);
+
+      return this.findAll(user_id);
     }
-
-    const newFavorite = this.favoriteRepository.create({
-      product,
-      user,
-    });
-
-    return this.favoriteRepository.save(newFavorite);
   }
 
   public remove(id: number): Promise<DeleteResult> {

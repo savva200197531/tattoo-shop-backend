@@ -11,6 +11,7 @@ import { EmailService } from '@/api/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import Mail from 'nodemailer/lib/mailer';
 import { ProductsService } from '@/api/products/products.service';
+import { Cart } from '@/api/cart/entities/cart.entity';
 
 @Injectable()
 export class OrdersService {
@@ -114,7 +115,7 @@ export class OrdersService {
         ),
       );
 
-      await this.sendOrderToEmail(order);
+      await this.sendOrderToEmail(order, params.cart);
 
       if (params.user_id) {
         await Promise.all(
@@ -126,7 +127,7 @@ export class OrdersService {
     return order;
   }
 
-  async sendOrderToEmail(order: Order) {
+  async sendOrderToEmail(order: Order, cart: Cart[]) {
     const options: Mail.Options = {
       subject: `Заказ №${order.id}, от ${order.date}`,
       text: `
@@ -135,11 +136,13 @@ export class OrdersService {
         Адрес: ${order.street} ${order.house} ${order.apartment},
         Телефон: ${order.phone},
         Почта: ${order.email},
-        Оплачено: ${order.price},
-        Продукты: ${order.products
+        Оплачено: ${order.price} ₽,
+        Товары: ${cart
           .map(
-            (product) =>
-              `${this.configService.get('MAIN_URL')}/products/${product.id}`,
+            (cart) =>
+              `${this.configService.get('MAIN_URL')}/products/${
+                cart.product.id
+              }`,
           )
           .join(', ')}
         `,
