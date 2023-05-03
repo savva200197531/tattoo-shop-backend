@@ -11,6 +11,7 @@ import { FavoriteModule } from './favorite/favorite.module';
 import { FilesModule } from './files/files.module';
 import { SliderModule } from './slider/slider.module';
 import { ProductsFiltersModule } from './products-filters/products-filters.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ProductsFiltersModule } from './products-filters/products-filters.modul
     FilesModule,
     SliderModule,
     ProductsFiltersModule,
+    FeedbackModule,
   ],
 })
 export class ApiModule {}

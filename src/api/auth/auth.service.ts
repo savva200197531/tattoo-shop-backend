@@ -75,4 +75,8 @@ export class AuthService {
 
     return this.authHelper.generateToken(user);
   }
+
+  public getUsernameIPkey(username: string, ip: string): string {
+    return `${username}_${ip}`;
+  }
 }
